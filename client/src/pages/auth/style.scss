@@ -1,0 +1,43 @@
+.auth {
+  padding: 80px 0;
+  .auth-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    padding: 0 0 14px 0;
+    width: 100%;
+    max-width: 396px;
+    border: 1px solid #dddfe2;
+
+    h5 {
+      padding: 24px 0 16px 0;
+      font-size: 18px;
+      line-height: 22px;
+      text-align: center;
+    }
+  }
+  .ant-form {
+    margin: 0 16px;
+    .ant-form-item {
+      margin: 0;
+      padding: 6px 0;
+      .ant-input {
+        border-radius: 6px;
+        font-size: 16px;
+        padding: 12px 16px;
+      }
+    }
+  }
+  .form-action {
+    text-align: center;
+    .ant-btn-round.ant-btn-lg {
+      border-radius: 6px;
+      font-size: 20px;
+      height: 48px;
+    }
+    .ant-divider {
+      margin: 8px 0;
+    }
+  }
+}
