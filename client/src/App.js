@@ -6,7 +6,7 @@ import axios from "axios";
 // components
 import { PrivateRoute, Header } from "components";
 // pages
-import { Auth, Forgot } from "pages";
+import { Auth, Forgot, Reset } from "pages";
 // context
 import { User } from "context/user";
 const App = () => {
@@ -66,6 +66,10 @@ const App = () => {
                 <Switch>
                   <Route path="/" exact component={Auth} />
                   <Route path="/auth/forgot" exact component={Forgot} />
+                  <Route
+                    path="/auth/reset/:token([0-9a-z]{36})"
+                    component={Reset}
+                  />
                 </Switch>
               </div>
             </Col>

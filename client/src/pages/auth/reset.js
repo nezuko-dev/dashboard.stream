@@ -4,10 +4,11 @@ import { Form, Input, Button, Divider, Card, Row, Col, message } from "antd";
 import { Link, Redirect } from "react-router-dom";
 import Cookie from "js-cookie";
 import "./style.scss";
-const Forgot = () => {
+const Reset = (props) => {
   const [form] = Form.useForm();
   const [disabled, disable] = useState(false);
   const [errors, setError] = useState(null);
+  const { token } = props.match.params;
   return Cookie.get("dashboard-token") ? (
     <Redirect to="/dashboard" />
   ) : (
@@ -15,11 +16,12 @@ const Forgot = () => {
       <Row justify="center">
         <Col xs={24} sm={18} md={14} lg={12} xl={10} xxl={8}>
           <Card>
-            <h2>Нууц үг сэргээх</h2>
+            <h2>Шинэ нууц үгээ оруулна уу</h2>
             <Divider />
             <span>
-              Tа Удирдлагын хэсэгт бүртгэлтэй Email хаяг аа оруулснаар нууц үг
-              сэргээх эрхээ email хаяг дээрээ авах боломжтой.
+              Tа нууц үгээ өөрийн болон удирдлагын хэсгийн аюулгүй байдлыг
+              хангаж 6-с дээш тэмдэгттэй амархан таах боломжгүй нууц үг сонгохыг
+              анхаарна уу.
             </span>
             <Form
               form={form}
@@ -28,11 +30,10 @@ const Forgot = () => {
                 setError(null);
                 disable(true);
                 axios
-                  .post("/api/account/forgot", { ...values })
+                  .post("/api/account/reset", { ...values, token })
                   .then((response) => {
                     if (response.data.status) {
-                      message.success("Tа Имэйл хаяг аа шалгана уу.");
-                      form.resetFields();
+                      document.location.href = "/dashboard";
                     } else {
                       message.error("Хүсэлт амжилтгүй боллоо.");
                     }
@@ -45,25 +46,29 @@ const Forgot = () => {
               }}
             >
               <Form.Item
-                name="email"
+                name="password"
                 rules={[
                   {
                     required: true,
-                    type: "email",
-                    message: "Email хаяг аа зөв оруулна уу!",
+                    min: 6,
+                    message: "Нууц үг доод тал нь 6 оронтой байна.",
                   },
                 ]}
-                {...(errors && errors.find((error) => error.param === "email")
+                {...(errors &&
+                errors.find((error) =>
+                  ["password", "token"].includes(error.param)
+                )
                   ? {
-                      help: errors.find((error) => error.param === "email").msg,
+                      help: errors.find((error) =>
+                        ["password", "token"].includes(error.param)
+                      ).msg,
                       validateStatus: "error",
                     }
                   : null)}
               >
-                <Input
-                  placeholder="Email"
-                  size="large"
-                  type="email"
+                <Input.Password
+                  type="password"
+                  placeholder="Шинэ нууц үг"
                   disabled={disabled}
                 />
               </Form.Item>
@@ -81,7 +86,7 @@ const Forgot = () => {
                     htmlType="submit"
                     disabled={disabled}
                   >
-                    Сэргээх
+                    Үргэлжлүүлэх
                   </Button>
                 </Row>
               </div>
@@ -92,4 +97,4 @@ const Forgot = () => {
     </div>
   );
 };
-export default Forgot;
+export default Reset;

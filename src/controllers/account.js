@@ -64,3 +64,50 @@ exports.forgot = (req, res) => {
     return res.json({ status: true });
   }
 };
+exports.reset = (req, res) => {
+  const errors = validationResult(req);
+  const { password, token } = req.body;
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    Admin.findOne({
+      reset_password_token: token,
+      reset_password_expires: { $gt: Date.now() },
+    }).then((doc) => {
+      if (doc) {
+        if (bcrypt.compareSync(password, doc.password)) {
+          return res.status(400).json({
+            errors: [
+              {
+                param: "password",
+                msg: "Tа өмнө нь ашиглаж байгаагүй нууц үг оруулна уу.",
+              },
+            ],
+          });
+        } else {
+          doc.password = password;
+          doc.reset_password_token = null;
+          doc.reset_password_expires = null;
+          doc.save(() => {
+            req.logIn(doc, (err) => {
+              if (err)
+                return res.json({
+                  status: false,
+                  message: "Failed to login",
+                });
+              return res.json({ status: true });
+            });
+          });
+        }
+      } else
+        return res.status(400).json({
+          errors: [
+            {
+              param: "token",
+              msg: "Нууц үг солих холбоос хүчингүй байна.",
+            },
+          ],
+        });
+    });
+  }
+};

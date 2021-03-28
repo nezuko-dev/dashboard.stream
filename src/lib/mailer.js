@@ -6,14 +6,12 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_KEY,
   region: process.env.AWS_REGION,
 });
-
 // create Nodemailer SES transporter
 let transporter = nodemailer.createTransport({
   SES: new AWS.SES({
     apiVersion: "2010-12-01",
   }),
 });
-
 // send some mail
 exports.send = ({ to, subject, text }) => {
   transporter.sendMail(

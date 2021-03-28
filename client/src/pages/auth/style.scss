@@ -24,6 +24,12 @@
         font-size: 16px;
         padding: 12px 16px;
       }
+      .ant-input-affix-wrapper {
+        border-radius: 6px;
+        .ant-input {
+          padding: 8px 4px;
+        }
+      }
       .ant-form-item-explain {
         margin: 0 1px;
       }
