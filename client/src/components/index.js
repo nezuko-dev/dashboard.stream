@@ -1,2 +1,3 @@
 import PrivateRoute from "./route/private";
-export { PrivateRoute };
+import Header from "./header";
+export { PrivateRoute, Header };

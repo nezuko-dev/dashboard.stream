@@ -14,7 +14,7 @@ passport.deserializeUser((id, done) => {
 });
 passport.use(
   new LocalStrategy({ usernameField: "email" }, (username, password, done) => {
-    var message = { message: "Incorrect username or password" };
+    var message = { message: "Email эсвэл нууц үг буруу байна." };
     Admin.findOne({ "email.value": username.toLowerCase() }).then((admin) => {
       if (!admin) {
         return done(null, false, message);

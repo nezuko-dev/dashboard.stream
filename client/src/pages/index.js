@@ -1,2 +1,3 @@
 import Auth from "./auth/index";
-export { Auth };
+import Forgot from "./auth/forgot";
+export { Auth, Forgot };

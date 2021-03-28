@@ -4,9 +4,9 @@ import { notification, Row, Col } from "antd";
 import Cookie from "js-cookie";
 import axios from "axios";
 // components
-import { PrivateRoute } from "components";
+import { PrivateRoute, Header } from "components";
 // pages
-import { Auth } from "pages";
+import { Auth, Forgot } from "pages";
 // context
 import { User } from "context/user";
 const App = () => {
@@ -62,8 +62,10 @@ const App = () => {
               xxl={token ? 20 : 24}
             >
               <div className="main-container">
+                {token ? <Header /> : null}
                 <Switch>
                   <Route path="/" exact component={Auth} />
+                  <Route path="/auth/forgot" exact component={Forgot} />
                 </Switch>
               </div>
             </Col>
