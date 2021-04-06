@@ -1,0 +1,57 @@
+#header {
+  position: relative;
+  z-index: 10;
+  max-width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 8px #f0f1f2;
+  .ant-row {
+    flex-flow: nowrap;
+    height: 64px;
+    row-gap: 0px;
+  }
+  .logo-container {
+    display: flex;
+    height: 100%;
+    h3 {
+      margin: 0;
+      a {
+        padding-left: 40px;
+        height: 64px;
+        line-height: 64px;
+        overflow: hidden;
+        color: rgba(0, 0, 0, 0.85);
+        font-size: 18px;
+        @media only screen and (max-width: 767.99px) {
+          padding-right: 0;
+          padding-left: 0;
+        }
+      }
+    }
+  }
+  .menu-row > * {
+    flex: none;
+    margin: 0 12px 0 0;
+  }
+  .menu-row {
+    justify-content: flex-end;
+    display: flex;
+    margin-right: 40px;
+    .menu-item {
+      min-width: 40px;
+      height: 64px;
+      margin-right: 12px;
+      margin-left: 12px;
+      line-height: 60px;
+      border-top: 2px solid transparent;
+      text-align: center;
+
+      button {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+
+        border-radius: 4px;
+      }
+    }
+  }
+}

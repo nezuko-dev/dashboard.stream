@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { notification, Row, Col } from "antd";
 import Cookie from "js-cookie";
 import axios from "axios";
 // components
 import { PrivateRoute, Header } from "components";
 // pages
-import { Auth, Forgot, Reset } from "pages";
+import { Auth, Forgot, Reset, Dashboard } from "pages";
 // context
 import { User } from "context/user";
 const App = () => {
@@ -53,6 +53,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <User.Provider value={value}>
+        {token ? <Header /> : null}
         <div className="app">
           <Row>
             <Col
@@ -62,14 +63,17 @@ const App = () => {
               xxl={token ? 20 : 24}
             >
               <div className="main-container">
-                {token ? <Header /> : null}
                 <Switch>
+                  {/* login, forgot, reset */}
                   <Route path="/" exact component={Auth} />
                   <Route path="/auth/forgot" exact component={Forgot} />
                   <Route
                     path="/auth/reset/:token([0-9a-z]{36})"
                     component={Reset}
                   />
+                  {/* main routes */}
+                  <PrivateRoute path="/dashboard" exact component={Dashboard} />
+                  <Redirect to="/dashboard" />
                 </Switch>
               </div>
             </Col>
