@@ -7,7 +7,7 @@ html,
   height: 100%;
 }
 .app {
-  padding-top: 64px;
+  padding-top: 22px;
   height: 100%;
   position: relative;
   & > .ant-row {
@@ -42,7 +42,7 @@ html,
 a,
 a:active,
 a:visited {
-  color: #1a73e8;
+  color: unset;
   text-decoration: none;
   outline: 0;
 }

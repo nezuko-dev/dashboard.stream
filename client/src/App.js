@@ -4,7 +4,7 @@ import { notification, Row, Col } from "antd";
 import Cookie from "js-cookie";
 import axios from "axios";
 // components
-import { PrivateRoute, Header } from "components";
+import { PrivateRoute, Header, Drawer } from "components";
 // pages
 import { Auth, Forgot, Reset, Dashboard } from "pages";
 // context
@@ -56,6 +56,7 @@ const App = () => {
         {token ? <Header /> : null}
         <div className="app">
           <Row>
+            <Drawer />
             <Col
               md={token ? 18 : 24}
               lg={token ? 18 : 24}

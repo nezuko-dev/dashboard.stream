@@ -1,3 +1,4 @@
 import PrivateRoute from "./route/private";
 import Header from "./header";
-export { PrivateRoute, Header };
+import Drawer from "./drawer";
+export { PrivateRoute, Header, Drawer };
