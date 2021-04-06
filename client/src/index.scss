@@ -46,7 +46,7 @@ a:visited {
   text-decoration: none;
   outline: 0;
 }
-// normalize dropdown
+// normalize
 .ant-dropdown-menu {
   position: relative;
   margin: 0;
@@ -72,7 +72,27 @@ a:visited {
   cursor: pointer;
   transition: all 0.3s;
 }
-.ant-btn,
-.ant-modal-content {
+.ant-btn {
   border-radius: 4px;
+}
+.ant-modal-content {
+  border-radius: 8px;
+}
+.custom-form {
+  .ant-input,
+  .ant-input-affix-wrapper {
+    border-radius: 8px;
+  }
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  .ant-form-item-with-help {
+    margin-bottom: 0 !important;
+  }
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
 }

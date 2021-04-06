@@ -1,0 +1,17 @@
+.settings {
+  .ant-card {
+    margin-top: 20px;
+  }
+  .email-modal {
+    h4 {
+      margin-bottom: 24px;
+    }
+  }
+}
+.email-update {
+  .ant-form-item {
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}

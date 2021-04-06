@@ -111,3 +111,105 @@ exports.reset = (req, res) => {
     });
   }
 };
+exports.email = (req, res) => {
+  const { email, password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    Admin.findById(req.user.id).then(async (doc) => {
+      if (!bcrypt.compareSync(password, doc.password)) {
+        return res.status(400).json({
+          status: false,
+          errors: [
+            {
+              msg: "Нууц үг тохирсонгүй",
+              param: "check_password",
+            },
+          ],
+        });
+      } else if (doc.email.value === email.toLowerCase()) {
+        return res.status(400).json({
+          status: false,
+          errors: [
+            {
+              msg: "Tа өөр email хаяг оруулна уу.",
+              param: "new_email",
+            },
+          ],
+        });
+      } else {
+        let found = await Admin.findOne({
+          "email.value": email.toLowerCase(),
+          _id: { $ne: req.user.id },
+        });
+        if (found)
+          return res.status(400).json({
+            status: false,
+            errors: [
+              {
+                msg: "Энэ email хаягийг ашиглах боломжгүй байна.",
+                param: "new_email",
+              },
+            ],
+          });
+        else {
+          var code = Math.floor(100000 + Math.random() * 900000);
+          mailer.send({
+            to: email,
+            subject: "Email хаягаа баталгаажуулна уу.",
+            text: `Сайн байна уу., <b>${doc.name}</b> <br> 
+            Tа <b> ${String(
+              code
+            )}</b> энэ кодыг оруулж шинэ email хаягаа баталгаажуулна уу.`,
+          });
+          doc.email.pin = bcrypt.hashSync(code.toString(), 10);
+          doc.email.update = email;
+          doc.save(() => res.json({ status: true }));
+        }
+      }
+    });
+  }
+};
+exports.pin = (req, res) => {
+  const { pin } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    Admin.findById(req.user.id)
+      .then(async (doc) => {
+        if (!doc.email.pin) {
+          return res.status(400).json({
+            status: false,
+            errors: [
+              {
+                msg: "Баталгаажуулах код хүчингүй байна.",
+                param: "pin",
+              },
+            ],
+          });
+        }
+        if (!bcrypt.compareSync(pin, doc.email.pin)) {
+          return res.status(400).json({
+            status: false,
+            errors: [
+              {
+                msg: "Баталгаажуулах код буруу байна.",
+                param: "pin",
+              },
+            ],
+          });
+        } else {
+          var email = doc.email.update;
+          doc.email.pin = null;
+          doc.email.update = null;
+          doc.email.value = email;
+          doc.save(() => res.json({ status: true, updated: email }));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};

@@ -12,4 +12,7 @@ router.get("/logout", token, account.logout);
 router.post("/auth", account.auth);
 router.post("/forgot", validator.email, account.forgot);
 router.post("/reset", validator.password, account.reset);
+// settings
+router.post("/email", token, validator.update_email, account.email);
+router.post("/email/save", token, validator.pin, account.pin);
 module.exports = router;

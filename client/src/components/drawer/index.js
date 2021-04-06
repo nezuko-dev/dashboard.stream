@@ -51,7 +51,7 @@ const Drawer = () => {
           icon: <UnorderedListOutlined />,
         },
         {
-          to: "/content",
+          to: "/titles",
           title: "Контентууд",
           icon: <PlaySquareOutlined />,
         },
