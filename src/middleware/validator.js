@@ -20,3 +20,19 @@ exports.pin = [
     .isLength({ min: 5, max: 6 })
     .withMessage("Баталгаажуулах код 6 оронтой тооноос бүрдэнэ."),
 ];
+exports.name = [
+  check("name")
+    .isLength({ min: 5, max: 22 })
+    .withMessage("5 - 22 тэмдэгтийн хооронд оруулна уу."),
+];
+exports.passwords = [
+  check("current_password")
+    .isLength({ min: 6, max: 32 })
+    .withMessage("6 - 32 тэмдэгтийн хооронд оруулна уу."),
+  check("new_password")
+    .isLength({ min: 6, max: 32 })
+    .withMessage("6 - 32 тэмдэгтийн хооронд оруулна уу."),
+  check("confirm_password")
+    .isLength({ min: 6, max: 32 })
+    .withMessage("6 - 32 тэмдэгтийн хооронд оруулна уу."),
+];

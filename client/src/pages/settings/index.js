@@ -16,7 +16,7 @@ import axios from "axios";
 import "./style.scss";
 
 const Settings = () => {
-  const { user } = useContext(User);
+  const { user, setUser } = useContext(User);
   const [errors, setError] = useState(null);
   const [information] = Form.useForm();
   const [password] = Form.useForm();
@@ -36,7 +36,25 @@ const Settings = () => {
                   layout="vertical"
                   className="custom-form"
                   onFinish={(values) => {
-                    console.log(values);
+                    setError(null);
+                    disable("information");
+                    axios
+                      .post("/api/account/information", { name: values.name })
+                      .then((response) => {
+                        if (response.data.status) {
+                          information.setFieldsValue({
+                            name: response.data.updated,
+                          });
+                          setUser({ ...user, name: response.data.updated });
+                          message.success(
+                            "Tаны нэр амжилттай шинэчлэгдлээ.",
+                            100
+                          );
+                        }
+                      })
+                      .catch((err) => {
+                        setError(err.response.data.errors);
+                      });
                   }}
                   initialValues={{
                     name: user.name,
@@ -52,9 +70,29 @@ const Settings = () => {
                         required: true,
                         message: "Нэр ээ оруулна уу!",
                       },
+                      {
+                        min: 5,
+                        message: "Tаны нэр доод тал нь 5 оронтой байна.",
+                      },
+                      {
+                        max: 22,
+                        message: "Tаны нэр дээд тал нь 22 оронтой байна.",
+                      },
                     ]}
+                    {...(errors &&
+                    errors.find((error) => error.param === "name")
+                      ? {
+                          help: errors.find((error) => error.param === "name")
+                            .msg,
+                          validateStatus: "error",
+                        }
+                      : null)}
                   >
-                    <Input placeholder="Нэр" size="large" />
+                    <Input
+                      placeholder="Нэр"
+                      size="large"
+                      onChange={(e) => disable("")}
+                    />
                   </Form.Item>
                   <Form.Item label="Эрх" name="role">
                     <Input size="large" disabled={true} />
@@ -69,7 +107,12 @@ const Settings = () => {
                     <Input placeholder="Email" size="large" />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" size="large" htmlType="submit">
+                    <Button
+                      type="primary"
+                      size="large"
+                      htmlType="submit"
+                      disabled={disabled === "information" && true}
+                    >
                       Хадгалах
                     </Button>
                   </Form.Item>
@@ -274,7 +317,35 @@ const Settings = () => {
               layout="vertical"
               className="custom-form"
               onFinish={(values) => {
-                console.log(values);
+                const { new_password, confirm_password } = values;
+                setError(null);
+                if (new_password !== confirm_password) {
+                  setError([
+                    {
+                      param: "confirm_password",
+                      msg: "Нууц үг таарахгүй байна.",
+                    },
+                  ]);
+                } else {
+                  disable("password");
+                  axios
+                    .post("/api/account/password", { ...values })
+                    .then((response) => {
+                      if (response.data.status) {
+                        message.success(
+                          `Tаны нууц үг амжилттай шинэчлэгдлээ. ${
+                            response.data.duplicate ? "🤔" : ""
+                          }`
+                        );
+                        disable("");
+                      }
+                    })
+                    .catch((err) => {
+                      setError(err.response.data.errors);
+                      disable("");
+                    });
+                  password.resetFields();
+                }
               }}
             >
               <Form.Item
@@ -285,7 +356,18 @@ const Settings = () => {
                     required: true,
                     message: "Нууц үгээ оруулна уу!",
                   },
+                  { min: 6, message: "Нууц үг доод тал нь 6 оронтой байна." },
+                  { max: 32, message: "Нууц үг дээд тал нь 32 оронтой байна." },
                 ]}
+                {...(errors &&
+                errors.find((error) => error.param === "current_password")
+                  ? {
+                      help: errors.find(
+                        (error) => error.param === "current_password"
+                      ).msg,
+                      validateStatus: "error",
+                    }
+                  : null)}
               >
                 <Input.Password
                   placeholder="Одоо ашиглаж буй нууц үг"
@@ -300,7 +382,18 @@ const Settings = () => {
                     required: true,
                     message: "Нууц үгээ оруулна уу!",
                   },
+                  { min: 6, message: "Нууц үг доод тал нь 6 оронтой байна." },
+                  { max: 32, message: "Нууц үг дээд тал нь 32 оронтой байна." },
                 ]}
+                {...(errors &&
+                errors.find((error) => error.param === "new_password")
+                  ? {
+                      help: errors.find(
+                        (error) => error.param === "new_password"
+                      ).msg,
+                      validateStatus: "error",
+                    }
+                  : null)}
               >
                 <Input.Password placeholder="Шинэ нууц үг" size="large" />
               </Form.Item>
@@ -312,12 +405,33 @@ const Settings = () => {
                     required: true,
                     message: "Нууц үгээ оруулна уу!",
                   },
+                  { min: 6, message: "Нууц үг доод тал нь 6 оронтой байна." },
+                  { max: 32, message: "Нууц үг дээд тал нь 32 оронтой байна." },
                 ]}
+                {...(errors &&
+                errors.find((error) => error.param === "confirm_password")
+                  ? {
+                      help: errors.find(
+                        (error) => error.param === "confirm_password"
+                      ).msg,
+                      validateStatus: "error",
+                    }
+                  : null)}
               >
                 <Input.Password
                   placeholder="Шинэ нууц үгээ давтан оруулна уу"
                   size="large"
                 />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  size="large"
+                  htmlType="submit"
+                  disabled={disabled === "password" && true}
+                >
+                  Хадгалах
+                </Button>
               </Form.Item>
             </Form>
           </Card>

@@ -15,4 +15,6 @@ router.post("/reset", validator.password, account.reset);
 // settings
 router.post("/email", token, validator.update_email, account.email);
 router.post("/email/save", token, validator.pin, account.pin);
+router.post("/information", token, validator.name, account.information);
+router.post("/password", token, validator.passwords, account.password);
 module.exports = router;

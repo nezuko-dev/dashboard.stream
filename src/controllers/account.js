@@ -213,3 +213,43 @@ exports.pin = (req, res) => {
       });
   }
 };
+exports.information = async (req, res) => {
+  const { name } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    await Admin.findByIdAndUpdate(req.user.id, { name });
+    return res.json({ status: true, updated: name });
+  }
+};
+exports.password = (req, res) => {
+  const { current_password, new_password, confirm_password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    if (new_password !== confirm_password) {
+      return res.status(400).json({
+        status: false,
+        errors: [
+          { param: "confirm_password", msg: "Шинэ нууц үг таарсангүй." },
+        ],
+      });
+    } else {
+      Admin.findById(req.user.id).then((admin) => {
+        if (bcrypt.compareSync(current_password, admin.password)) {
+          var duplicate = bcrypt.compareSync(confirm_password, admin.password);
+          admin.password = confirm_password;
+          admin.save(() => res.json({ status: true, duplicate }));
+        } else
+          return res.status(400).json({
+            status: false,
+            errors: [
+              { param: "current_password", msg: "Нууц үг буруу байна." },
+            ],
+          });
+      });
+    }
+  }
+};
