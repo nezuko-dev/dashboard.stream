@@ -44,7 +44,9 @@ const Dashboard = () => {
   ];
   return (
     <div className="dashboard">
-      <h3>статистик</h3>
+      <div className="title-container">
+        <span className="page-title">Статистик</span>
+      </div>
       <Row>
         {data.map((item, index) => (
           <Col

@@ -8,6 +8,10 @@
     flex-flow: nowrap;
     height: 64px;
     row-gap: 0px;
+    padding: 0 48px;
+    @media (max-width: 768px) {
+      padding: 0 16px;
+    }
   }
   .logo-container {
     display: flex;
@@ -15,7 +19,6 @@
     h3 {
       margin: 0;
       a {
-        padding-left: 40px;
         height: 64px;
         line-height: 64px;
         overflow: hidden;
@@ -35,7 +38,6 @@
   .menu-row {
     justify-content: flex-end;
     display: flex;
-    margin-right: 40px;
     .menu-item {
       min-width: 40px;
       height: 64px;

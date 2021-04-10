@@ -38,23 +38,22 @@ const Settings = () => {
                   onFinish={(values) => {
                     setError(null);
                     disable("information");
-                    axios
-                      .post("/api/account/information", { name: values.name })
-                      .then((response) => {
-                        if (response.data.status) {
-                          information.setFieldsValue({
-                            name: response.data.updated,
-                          });
-                          setUser({ ...user, name: response.data.updated });
-                          message.success(
-                            "Tаны нэр амжилттай шинэчлэгдлээ.",
-                            100
-                          );
-                        }
-                      })
-                      .catch((err) => {
-                        setError(err.response.data.errors);
-                      });
+                    if (values.name !== user.name) {
+                      axios
+                        .post("/api/account/information", { name: values.name })
+                        .then((response) => {
+                          if (response.data.status) {
+                            information.setFieldsValue({
+                              name: response.data.updated,
+                            });
+                            setUser({ ...user, name: response.data.updated });
+                            message.success("Tаны нэр амжилттай шинэчлэгдлээ.");
+                          }
+                        })
+                        .catch((err) => {
+                          setError(err.response.data.errors);
+                        });
+                    }
                   }}
                   initialValues={{
                     name: user.name,
