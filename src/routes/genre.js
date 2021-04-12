@@ -9,5 +9,6 @@ const validator = require("../middleware/validator");
  */
 router.get("/", token, genre.index);
 router.post("/", token, validator.genre, genre.add);
-
+router.post("/:id", token, validator.genre, genre.edit);
+router.delete("/:id", token, genre.delete);
 module.exports = router;

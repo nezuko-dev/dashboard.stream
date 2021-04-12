@@ -9,7 +9,9 @@ import {
   Modal,
   Form,
   Input,
+  Row,
 } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import axios from "axios";
 
@@ -20,6 +22,14 @@ const Genre = () => {
   const [form] = Form.useForm();
   const [errors, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  // edit
+  const [edit, setEdit] = useState(null);
+  useEffect(() => {
+    if (!edit) {
+      form.resetFields();
+    }
+    form.setFieldsValue(edit);
+  }, [form, edit]);
   const load = () => {
     setState(null);
     axios
@@ -43,13 +53,58 @@ const Genre = () => {
       dataIndex: "created",
       render: (text) => moment(text).fromNow(),
     },
+    {
+      title: "",
+      render: (record, text) => (
+        <Row justify="end">
+          <Button
+            type="link"
+            onClick={() => {
+              OpenModal(true);
+              setEdit(record);
+            }}
+          >
+            Засах
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() =>
+              Modal.confirm({
+                title: "Анхааруулга",
+                icon: <ExclamationCircleOutlined />,
+                content: "Та устгахдаа итгэлтэй байна уу?",
+                okText: "Tийм",
+                cancelText: "Буцах",
+                onOk: () => {
+                  axios
+                    .delete(`/api/genre/${record._id}`)
+                    .then((response) => {
+                      if (response.data.status) {
+                        message.success("Амжилттай устгагдлаа.");
+                        load();
+                      }
+                    })
+                    .catch((err) => message.error("Хүсэлт амжилтгүй"));
+                },
+              })
+            }
+          >
+            Устгах
+          </Button>
+        </Row>
+      ),
+    },
   ];
   useEffect(() => load(), []);
   const Add = () => (
     <Button
       type="primary"
       className="button-content"
-      onClick={() => OpenModal(true)}
+      onClick={() => {
+        setEdit(null);
+        OpenModal(true);
+      }}
     >
       Нэмэх
     </Button>
@@ -86,23 +141,26 @@ const Genre = () => {
       </div>
       <Modal
         visible={modal}
-        title="Tөрөл нэмэх"
+        title={edit ? "Контентийн төрлийн мэдээлэл засах" : "Tөрөл нэмэх"}
         onCancel={() => OpenModal(false)}
         onOk={() => form.submit()}
         okText="Хадгалах"
         cancelText="Буцах"
         className="custom-modal"
         confirmLoading={loading}
+        forceRender
       >
         <Form
           form={form}
           layout="vertical"
           className="custom-form"
+          initialValues={edit}
+          autoComplete="off"
           onFinish={(values) => {
             setError(null);
             setLoading(true);
             axios
-              .post("/api/genre", { ...values })
+              .post(`/api/genre${edit ? `/${edit._id}` : ""}`, { ...values })
               .then((response) => {
                 if (response.data.status) {
                   message.success("Tөрөл амжилттай нэмэгдлээ.");
