@@ -18,6 +18,7 @@ import axios from "axios";
 import "./style.scss";
 const Genre = () => {
   const [state, setState] = useState(null);
+  const [search, setSearch] = useState(null);
   const [modal, OpenModal] = useState(false);
   const [form] = Form.useForm();
   const [errors, setError] = useState(null);
@@ -119,8 +120,36 @@ const Genre = () => {
                 <span className="page-title">Tөрөл</span>
                 <Add />
               </div>
+              <div className="">
+                <Form.Item>
+                  <Input
+                    placeholder="Tөрөл хайх"
+                    size="large"
+                    className="custom-input"
+                    autoFocus={true}
+                    onChange={(e) => {
+                      var search = e.target.value;
+                      if (search) {
+                        setSearch(
+                          state.filter(
+                            (genre) =>
+                              genre.name
+                                .toLowerCase()
+                                .includes(search.toLowerCase()) ||
+                              genre.keyword
+                                .toLowerCase()
+                                .includes(search.toLowerCase())
+                          )
+                        );
+                      } else {
+                        setSearch(state);
+                      }
+                    }}
+                  />
+                </Form.Item>
+              </div>
               <Table
-                dataSource={state}
+                dataSource={search ? search : state}
                 columns={columns}
                 rowKey={(record) => record._id}
                 locale={{
