@@ -36,7 +36,7 @@ const Drawer = () => {
           icon: <TeamOutlined />,
         },
         {
-          to: "/managers",
+          to: "/admins",
           title: "Админ",
           icon: <SolutionOutlined />,
         },

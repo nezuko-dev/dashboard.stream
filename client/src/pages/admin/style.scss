@@ -1,0 +1,23 @@
+.admins {
+  .admin-status {
+    line-height: 20px;
+    .status {
+      span.label {
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        color: #3c4043;
+      }
+      .anticon {
+        margin-right: 6px;
+      }
+    }
+    .expires {
+      font-weight: 400;
+      color: #5f6368;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      line-height: 16px;
+      margin-top: 4px;
+    }
+  }
+}

@@ -41,6 +41,12 @@ exports.genre = [
     .isLength({ min: 2, max: 32 })
     .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
   check("keyword")
-    .isLength({ max: 120 })
-    .withMessage("Дээд тал нь 120 тэмдэгт байна."),
+    .isLength({ max: 32 })
+    .withMessage("Дээд тал нь 32 тэмдэгт байна."),
+];
+exports.admin = [
+  check("name")
+    .isLength({ min: 2, max: 32 })
+    .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
+  check("email").isEmail(),
 ];

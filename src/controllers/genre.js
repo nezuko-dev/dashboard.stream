@@ -2,7 +2,10 @@ const Genre = require("../models/genre");
 const { validationResult } = require("express-validator");
 const ObjectId = require("mongoose").Types.ObjectId;
 exports.index = async (req, res) => {
-  return res.json({ status: true, data: await Genre.find() });
+  return res.json({
+    status: true,
+    data: await Genre.find().sort({ created: -1 }),
+  });
 };
 exports.add = (req, res) => {
   const { name, keyword } = req.body;

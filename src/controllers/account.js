@@ -30,7 +30,7 @@ exports.forgot = (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ status: false, errors: errors.array() });
   } else {
-    Admin.findOne({ "email.value": email.toLowerCase() })
+    Admin.findOne({ "email.value": email.toLowerCase(), "invite.token": null })
       .then((doc) => {
         if (doc) {
           Admin.findById(doc._id).then(async (user) => {

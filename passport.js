@@ -15,7 +15,10 @@ passport.deserializeUser((id, done) => {
 passport.use(
   new LocalStrategy({ usernameField: "email" }, (username, password, done) => {
     var message = { message: "Email эсвэл нууц үг буруу байна." };
-    Admin.findOne({ "email.value": username.toLowerCase() }).then((admin) => {
+    Admin.findOne({
+      "email.value": username.toLowerCase(),
+      "invite.token": null,
+    }).then((admin) => {
       if (!admin) {
         return done(null, false, message);
       } else if (!bcrypt.compareSync(password, admin.password))

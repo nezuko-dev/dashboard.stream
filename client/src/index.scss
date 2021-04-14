@@ -109,7 +109,8 @@ a:visited {
 }
 .custom-form {
   .ant-input,
-  .ant-input-affix-wrapper {
+  .ant-input-affix-wrapper,
+  .ant-picker {
     border-radius: 8px;
   }
   .ant-form-item {
@@ -158,5 +159,8 @@ a:visited {
   }
 }
 .custom-input {
+  border-radius: 8px;
+}
+.ant-picker-panel-container {
   border-radius: 8px;
 }

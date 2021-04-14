@@ -12,6 +12,11 @@ const adminSchema = new mongoose.Schema({
   created: { type: Date, default: Date.now },
   reset_password_token: { type: String, default: null },
   reset_password_expires: { type: Date, default: null },
+  // invitation
+  invite: {
+    token: { type: String, default: null },
+    expires: { type: String, default: null },
+  },
 });
 adminSchema.pre("save", function (next) {
   const admin = this;

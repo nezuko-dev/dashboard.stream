@@ -6,7 +6,7 @@ import axios from "axios";
 // components
 import { PrivateRoute, Header, Drawer } from "components";
 // pages
-import { Auth, Forgot, Reset, Dashboard, Settings, Genre } from "pages";
+import { Auth, Forgot, Reset, Dashboard, Settings, Genre, Admin } from "pages";
 // context
 import { User } from "context/user";
 const App = () => {
@@ -76,6 +76,7 @@ const App = () => {
                   <PrivateRoute path="/dashboard" exact component={Dashboard} />
                   <PrivateRoute path="/settings" exact component={Settings} />
                   <PrivateRoute path="/genre" exact component={Genre} />
+                  <PrivateRoute path="/admins" exact component={Admin} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>

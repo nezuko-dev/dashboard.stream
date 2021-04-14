@@ -1,72 +1,86 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  message,
-  Table,
-  Button,
   Card,
-  Spin,
-  Empty,
+  message,
   Modal,
+  Button,
   Form,
   Input,
+  Checkbox,
+  DatePicker,
+  Table,
+  Empty,
+  Spin,
   Row,
 } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
-import axios from "axios";
-
+import {
+  ExclamationCircleOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
+import locale from "antd/es/date-picker/locale/mn_MN";
 import "./style.scss";
-const Genre = () => {
+import axios from "axios";
+const Admin = () => {
   const [state, setState] = useState(null);
   const [search, setSearch] = useState(null);
   const [modal, OpenModal] = useState(false);
-  const [form] = Form.useForm();
-  const [errors, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  // edit
-  const [edit, setEdit] = useState(null);
-  useEffect(() => {
-    if (!edit) {
-      form.resetFields();
-    }
-    form.setFieldsValue(edit);
-  }, [form, edit]);
+  const [errors, setError] = useState(null);
+  const [form] = Form.useForm();
+  const [expire, setExpire] = useState(false);
   const load = () => {
     setState(null);
     axios
-      .get("/api/genre")
-      .then((response) => {
-        if (response.data.status) setState(response.data.data);
-      })
-      .catch((err) => message.error("Хүсэлт амжилтүй"));
+      .get("/api/admin")
+      .then((response) => response.data.status && setState(response.data.data))
+      .catch((err) => message.error("Хүсэлт амжилтгүй"));
   };
   const columns = [
+    {
+      title: "Email хаяг",
+      dataIndex: "email",
+      render: (text) => <a href={`mailto:${text}`}>{text}</a>,
+    },
     {
       title: "Нэр",
       dataIndex: "name",
     },
     {
-      title: "Tүлхүүр үг",
-      dataIndex: "keyword",
+      title: "Tөлөв",
+      dataIndex: "",
+      render: (record, text) => (
+        <div className="admin-status">
+          <span className="status">
+            {record.active ? (
+              <>
+                <CheckCircleOutlined style={{ color: "#1a863a" }} />
+                <span className="label">Идэвхтэй</span>
+              </>
+            ) : (
+              <>
+                <ExclamationCircleOutlined style={{ color: "orange" }} />
+                <span className="label">Идэвхгүй</span>
+              </>
+            )}
+          </span>
+          <div className="expires">
+            {record.expires
+              ? moment(record.expires).format("YYYY-MM-DD")
+              : "Хугацаагүй"}
+          </div>
+        </div>
+      ),
     },
     {
-      title: "Үүсгэсэн огноо",
+      title: "Үүсгэсэн",
       dataIndex: "created",
       render: (text) => moment(text).fromNow(),
     },
     {
-      title: "",
+      title: "Үйлдэл",
       render: (record, text) => (
         <Row justify="end">
-          <Button
-            type="link"
-            onClick={() => {
-              OpenModal(true);
-              setEdit(record);
-            }}
-          >
-            Засах
-          </Button>
           <Button
             type="link"
             danger
@@ -79,7 +93,7 @@ const Genre = () => {
                 cancelText: "Буцах",
                 onOk: () => {
                   axios
-                    .delete(`/api/genre/${record._id}`)
+                    .delete(`/api/admin/${record._id}`)
                     .then((response) => {
                       if (response.data.status) {
                         message.success("Амжилттай устгагдлаа.");
@@ -97,33 +111,37 @@ const Genre = () => {
       ),
     },
   ];
-  useEffect(() => load(), []);
+  useEffect(() => {
+    load();
+  }, []);
   const Add = () => (
     <Button
       type="primary"
       className="button-content"
       onClick={() => {
-        setEdit(null);
+        // setEdit(null);
+        setExpire(false);
+        setError(null);
         OpenModal(true);
       }}
     >
-      Нэмэх
+      Админ нэмэх
     </Button>
   );
   return (
     <>
-      <div className="genre">
+      <div className="admins">
         <Card>
           {state ? (
             <>
               <div className="title-container">
-                <span className="page-title">Tөрөл</span>
+                <span className="page-title">Админууд</span>
                 <Add />
               </div>
               <div className="">
                 <Form.Item>
                   <Input
-                    placeholder="Tөрөл хайх"
+                    placeholder="Админ хайх"
                     size="large"
                     className="custom-input"
                     autoFocus={true}
@@ -137,7 +155,7 @@ const Genre = () => {
                               genre.name
                                 .toLowerCase()
                                 .includes(search.toLowerCase()) ||
-                              genre.keyword
+                              genre.email
                                 .toLowerCase()
                                 .includes(search.toLowerCase())
                           )
@@ -155,7 +173,7 @@ const Genre = () => {
                 rowKey={(record) => record._id}
                 locale={{
                   emptyText: (
-                    <Empty description={<span>Tа төрөл үүсгэнэ үү.</span>}>
+                    <Empty description={<span>Tа шинэ админ нэмнэ үү.</span>}>
                       <Add />
                     </Empty>
                   ),
@@ -171,7 +189,7 @@ const Genre = () => {
       </div>
       <Modal
         visible={modal}
-        title={edit ? "Контентийн төрлийн мэдээлэл засах" : "Tөрөл нэмэх"}
+        title={`Шинэ админ нэмэх`}
         onCancel={() => OpenModal(false)}
         onOk={() => form.submit()}
         okText="Хадгалах"
@@ -184,16 +202,16 @@ const Genre = () => {
           form={form}
           layout="vertical"
           className="custom-form"
-          initialValues={edit}
+          // initialValues={}
           autoComplete="off"
           onFinish={(values) => {
             setError(null);
             setLoading(true);
             axios
-              .post(`/api/genre${edit ? `/${edit._id}` : ""}`, { ...values })
+              .post(`/api/admin/`, { ...values })
               .then((response) => {
                 if (response.data.status) {
-                  message.success("Tөрөл амжилттай нэмэгдлээ.");
+                  message.success("Шинэ админ амжилттай нэмэгдлээ.");
                   setLoading(false);
                   OpenModal(false);
                   form.resetFields();
@@ -208,11 +226,10 @@ const Genre = () => {
         >
           <Form.Item
             name="name"
-            label="Нэр"
             rules={[
               {
                 required: true,
-                message: "Нэр ээ оруулна уу!",
+                message: "Утга оруулна уу!",
               },
             ]}
             {...(errors && errors.find((error) => error.param === "name")
@@ -225,20 +242,51 @@ const Genre = () => {
             <Input placeholder="Нэр" size="large" />
           </Form.Item>
           <Form.Item
-            name="keyword"
-            label="Tүлхүүр үг"
-            {...(errors && errors.find((error) => error.param === "keyword")
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Утга оруулна уу!",
+              },
+            ]}
+            {...(errors && errors.find((error) => error.param === "email")
               ? {
-                  help: errors.find((error) => error.param === "keyword").msg,
+                  help: errors.find((error) => error.param === "email").msg,
                   validateStatus: "error",
                 }
               : null)}
           >
-            <Input placeholder="Tүлхүүр үг" size="large" />
+            <Input placeholder="Email хаяг" size="large" type="email" />
           </Form.Item>
+          <Form.Item style={{ marginBottom: 10 }}>
+            <Checkbox
+              checked={expire}
+              onChange={(e) => setExpire(e.target.checked)}
+            >
+              Эрхийн дуусах хугацаа тохируулах.
+            </Checkbox>
+          </Form.Item>
+          {expire ? (
+            <Form.Item
+              name="expires"
+              rules={[
+                {
+                  required: true,
+                  message: "Огноо сонгоно уу!",
+                },
+              ]}
+            >
+              <DatePicker
+                locale={locale}
+                showToday={false}
+                size="large"
+                disabledDate={(current) => current < moment()}
+              />
+            </Form.Item>
+          ) : null}
         </Form>
       </Modal>
     </>
   );
 };
-export default Genre;
+export default Admin;
