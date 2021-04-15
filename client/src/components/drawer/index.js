@@ -28,16 +28,19 @@ const Drawer = () => {
         {
           to: "/dashboard",
           title: "Хянах самбар",
+          role: ["admin", "editor"],
           icon: <DashboardOutlined />,
         },
         {
           to: "/users",
           title: "Хэрэглэгч",
+          role: ["admin"],
           icon: <TeamOutlined />,
         },
         {
           to: "/admins",
           title: "Админ",
+          role: ["admin"],
           icon: <SolutionOutlined />,
         },
       ],
@@ -48,16 +51,19 @@ const Drawer = () => {
         {
           to: "/genre",
           title: "Tөрөл",
+          role: ["admin"],
           icon: <UnorderedListOutlined />,
         },
         {
           to: "/titles",
           title: "Контентууд",
+          role: ["admin", "editor"],
           icon: <PlaySquareOutlined />,
         },
         {
           to: "/invoice",
           title: "Tөлбөрүүд",
+          role: ["admin"],
           icon: <CreditCardOutlined />,
         },
       ],
@@ -68,16 +74,19 @@ const Drawer = () => {
         {
           to: "/settings",
           title: "Tохиргоо",
+          role: ["admin", "editor"],
           icon: <SettingOutlined />,
         },
         {
           to: "/profile",
           title: "Хувийн мэдээлэл",
+          role: ["admin", "editor"],
           icon: <UserOutlined />,
         },
         {
           to: "/logout",
           title: "Системээс гарах",
+          role: ["admin", "editor"],
           icon: <LogoutOutlined />,
           onClick: (e) => {
             e.preventDefault();
@@ -110,13 +119,15 @@ const Drawer = () => {
             <Menu selectedKeys={location.pathname} mode="inline">
               {routes.map((route, index) => (
                 <Menu.ItemGroup key={index} title={route.title}>
-                  {route.items.map((item) => (
-                    <Menu.Item key={item.to} icon={item.icon}>
-                      <Link to={item.to} onClick={item.onClick}>
-                        {item.title}
-                      </Link>
-                    </Menu.Item>
-                  ))}
+                  {route.items
+                    .filter((item) => item.role.includes(user.role))
+                    .map((item) => (
+                      <Menu.Item key={item.to} icon={item.icon}>
+                        <Link to={item.to} onClick={item.onClick}>
+                          {item.title}
+                        </Link>
+                      </Menu.Item>
+                    ))}
                 </Menu.ItemGroup>
               ))}
             </Menu>

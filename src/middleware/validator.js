@@ -50,3 +50,12 @@ exports.admin = [
     .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
   check("email").isEmail(),
 ];
+exports.active = [
+  check("email").isEmail(),
+  check("password")
+    .isLength({ min: 6, max: 64 })
+    .withMessage("Нууц үг доод тал нь 6 оронтой байна."),
+  check("token")
+    .isLength({ min: 36 })
+    .withMessage("Алдаатай token илгээсэн байна."),
+];

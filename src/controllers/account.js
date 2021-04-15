@@ -253,3 +253,25 @@ exports.password = (req, res) => {
     }
   }
 };
+exports.active = (req, res) => {
+  const { email, password, token } = req.body;
+  Admin.findOne({
+    "email.value": email.toLowerCase(),
+    "invite.token": token,
+  }).then((doc) => {
+    if (doc) {
+      doc.password = password;
+      doc.invite.token = null;
+      doc.save(() =>
+        req.logIn(doc, (err) => {
+          if (err)
+            return res.json({
+              status: false,
+              message: "Failed to login",
+            });
+          return res.json({ status: true });
+        })
+      );
+    } else return res.json({ status: false });
+  });
+};

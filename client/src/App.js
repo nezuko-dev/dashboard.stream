@@ -6,7 +6,16 @@ import axios from "axios";
 // components
 import { PrivateRoute, Header, Drawer } from "components";
 // pages
-import { Auth, Forgot, Reset, Dashboard, Settings, Genre, Admin } from "pages";
+import {
+  Auth,
+  Forgot,
+  Reset,
+  Active,
+  Dashboard,
+  Settings,
+  Genre,
+  Admin,
+} from "pages";
 // context
 import { User } from "context/user";
 const App = () => {
@@ -65,12 +74,16 @@ const App = () => {
             >
               <div className="main-container">
                 <Switch>
-                  {/* login, forgot, reset */}
+                  {/* login, forgot, reset, active */}
                   <Route path="/" exact component={Auth} />
                   <Route path="/auth/forgot" exact component={Forgot} />
                   <Route
                     path="/auth/reset/:token([0-9a-z]{36})"
                     component={Reset}
+                  />
+                  <Route
+                    path="/auth/active/:token([0-9a-z]{36})"
+                    component={Active}
                   />
                   {/* main routes */}
                   <PrivateRoute path="/dashboard" exact component={Dashboard} />
