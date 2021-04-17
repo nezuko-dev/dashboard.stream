@@ -29,12 +29,26 @@ const Admin = () => {
   const [errors, setError] = useState(null);
   const [form] = Form.useForm();
   const [expire, setExpire] = useState(false);
+  // edit
+  const [edit, setEdit] = useState(null);
+  useEffect(() => {
+    if (!edit) {
+      form.resetFields();
+    }
+    form.setFieldsValue(edit);
+  }, [form, edit]);
   const load = () => {
     setState(null);
     axios
       .get("/api/admin")
       .then((response) => response.data.status && setState(response.data.data))
-      .catch((err) => message.error("Хүсэлт амжилтгүй"));
+      .catch((err) =>
+        message.error(
+          err.response.data.message
+            ? err.response.data.message
+            : "Хүсэлт амжилтгүй"
+        )
+      );
   };
   const columns = [
     {
@@ -83,6 +97,19 @@ const Admin = () => {
         <Row justify="end">
           <Button
             type="link"
+            onClick={() => {
+              setExpire(record.expires ? true : false);
+              setEdit({
+                ...record,
+                expires: record.expires ? moment(record.expires) : null,
+              });
+              OpenModal(true);
+            }}
+          >
+            Засах
+          </Button>
+          <Button
+            type="link"
             danger
             onClick={() =>
               Modal.confirm({
@@ -119,7 +146,7 @@ const Admin = () => {
       type="primary"
       className="button-content"
       onClick={() => {
-        // setEdit(null);
+        setEdit(null);
         setExpire(false);
         setError(null);
         OpenModal(true);
@@ -189,7 +216,7 @@ const Admin = () => {
       </div>
       <Modal
         visible={modal}
-        title={`Шинэ админ нэмэх`}
+        title={`${!edit ? "Шинэ админ нэмэх" : "Mэдээлэл өөрчлөх"}`}
         onCancel={() => OpenModal(false)}
         onOk={() => form.submit()}
         okText="Хадгалах"
@@ -202,13 +229,13 @@ const Admin = () => {
           form={form}
           layout="vertical"
           className="custom-form"
-          // initialValues={}
+          initialValues={edit}
           autoComplete="off"
           onFinish={(values) => {
             setError(null);
             setLoading(true);
             axios
-              .post(`/api/admin/`, { ...values })
+              .post(`/api/admin${edit ? `/${edit._id}` : ""}`, { ...values })
               .then((response) => {
                 if (response.data.status) {
                   message.success("Шинэ админ амжилттай нэмэгдлээ.");
@@ -241,23 +268,25 @@ const Admin = () => {
           >
             <Input placeholder="Нэр" size="large" />
           </Form.Item>
-          <Form.Item
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: "Утга оруулна уу!",
-              },
-            ]}
-            {...(errors && errors.find((error) => error.param === "email")
-              ? {
-                  help: errors.find((error) => error.param === "email").msg,
-                  validateStatus: "error",
-                }
-              : null)}
-          >
-            <Input placeholder="Email хаяг" size="large" type="email" />
-          </Form.Item>
+          {!edit ? (
+            <Form.Item
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Утга оруулна уу!",
+                },
+              ]}
+              {...(errors && errors.find((error) => error.param === "email")
+                ? {
+                    help: errors.find((error) => error.param === "email").msg,
+                    validateStatus: "error",
+                  }
+                : null)}
+            >
+              <Input placeholder="Email хаяг" size="large" type="email" />
+            </Form.Item>
+          ) : null}
           <Form.Item style={{ marginBottom: 10 }}>
             <Checkbox
               checked={expire}

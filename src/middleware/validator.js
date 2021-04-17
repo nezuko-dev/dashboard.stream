@@ -59,3 +59,12 @@ exports.active = [
     .isLength({ min: 36 })
     .withMessage("Алдаатай token илгээсэн байна."),
 ];
+exports.admin_update = [
+  check("name")
+    .isLength({ min: 2, max: 32 })
+    .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
+  check("expires")
+    .optional({ nullable: true })
+    .isDate()
+    .withMessage("Алдаатай хүсэлт"),
+];

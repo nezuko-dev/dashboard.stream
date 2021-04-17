@@ -16,7 +16,7 @@ exports.add = (req, res) => {
     Genre.create({ name, keyword }).then(() => res.json({ status: true }));
   }
 };
-exports.edit = (req, res) => {
+exports.update = (req, res) => {
   const { id: _id } = req.params;
   const { keyword, name } = req.body;
   const errors = validationResult(req);

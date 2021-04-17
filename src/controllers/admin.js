@@ -65,3 +65,13 @@ exports.delete = (req, res) => {
     });
   } else return res.status(400).json({ status: false });
 };
+exports.update = (req, res) => {
+  const { id } = req.params;
+  const { name, expires } = req.body;
+  if (ObjectId.isValid(id)) {
+    Admin.findByIdAndUpdate(
+      { _id: id },
+      { name, "invite.expires": expires || null }
+    ).then(() => res.json({ status: true }));
+  } else return res.status(400).json({ status: false });
+};

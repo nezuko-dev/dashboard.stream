@@ -201,8 +201,12 @@ const Genre = () => {
                 }
               })
               .catch((err) => {
-                setError(err.response.data.errors);
-                setLoading(false);
+                if (err.response.data.message)
+                  message.error(err.response.data.message);
+                else {
+                  setError(err.response.data.errors);
+                  setLoading(false);
+                }
               });
           }}
         >
