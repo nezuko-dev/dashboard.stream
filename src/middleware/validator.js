@@ -68,3 +68,11 @@ exports.admin_update = [
     .isDate()
     .withMessage("Алдаатай хүсэлт"),
 ];
+exports.content = [
+  check("name")
+    .isLength({ min: 2, max: 32 })
+    .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
+  check("filename")
+    .isLength({ min: 24 })
+    .withMessage("Алдаатай файлын зам илгээсэн байна."),
+];

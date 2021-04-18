@@ -7,4 +7,17 @@ import Dashboard from "./dashboard";
 import Settings from "./settings";
 import Genre from "./genre";
 import Admin from "./admin";
-export { Auth, Forgot, Reset, Active, Dashboard, Settings, Genre, Admin };
+import Title from "./titles";
+import Content from "./content";
+export {
+  Auth,
+  Forgot,
+  Reset,
+  Active,
+  Dashboard,
+  Settings,
+  Genre,
+  Admin,
+  Title,
+  Content,
+};

@@ -15,6 +15,8 @@ import {
   Settings,
   Genre,
   Admin,
+  Title,
+  Content,
 } from "pages";
 // context
 import { User } from "context/user";
@@ -90,6 +92,8 @@ const App = () => {
                   <PrivateRoute path="/settings" exact component={Settings} />
                   <PrivateRoute path="/genre" exact component={Genre} />
                   <PrivateRoute path="/admins" exact component={Admin} />
+                  <PrivateRoute path="/titles" exact component={Title} />
+                  <PrivateRoute path="/contents" exact component={Content} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>
