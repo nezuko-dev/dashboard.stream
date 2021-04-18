@@ -15,5 +15,6 @@ router.post(
   content.upload
 );
 router.post("/", validator.content, content.add);
+router.get("/:id", content.stream);
 router.delete("/:id", content.delete);
 module.exports = router;

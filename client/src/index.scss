@@ -10,7 +10,8 @@ html,
 }
 .app {
   // padding-top: 22px;
-  height: 100%;
+  height: calc(100% - 64px);
+
   position: relative;
   & > .ant-row {
     height: 100%;
@@ -19,7 +20,7 @@ html,
     }
   }
   .main-container {
-    min-height: 100vh;
+    // min-height: calc(100vh - 64px);
     padding: 22px 64px 32px 64px;
     @media (max-width: 1024px) {
       padding-right: 48px;

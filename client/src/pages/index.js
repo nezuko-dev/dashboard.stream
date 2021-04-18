@@ -9,6 +9,8 @@ import Genre from "./genre";
 import Admin from "./admin";
 import Title from "./titles";
 import Content from "./content";
+
+import Stream from "./stream";
 export {
   Auth,
   Forgot,
@@ -20,4 +22,5 @@ export {
   Admin,
   Title,
   Content,
+  Stream,
 };

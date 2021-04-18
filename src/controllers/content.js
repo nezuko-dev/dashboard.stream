@@ -6,11 +6,11 @@ const crypto = require("crypto");
 // file
 const path = require("path");
 const fs = require("fs-extra");
-const uploadPath = path.join(__dirname, process.env.UPLOAD_PATH);
+const uploadPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/raw/`);
 fs.ensureDir(uploadPath);
 // stream and ffmpeg config
 const ffmpeg = require("fluent-ffmpeg");
-const streamPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/stream`);
+const streamPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/stream/`);
 fs.ensureDir(streamPath);
 
 exports.index = async (req, res) =>
@@ -31,16 +31,17 @@ exports.add = (req, res) => {
       if (exists) {
         Content.create({ name, editor: req.user.id }).then((stream) => {
           var token = crypto.randomBytes(20).toString("hex");
-          const contentPath = path.join(streamPath, `/${stream._id}`);
+          const contentPath = path.join(streamPath, stream._id.toString());
           fs.ensureDir(contentPath);
           var size = (fs.statSync(raw).size / (1024 * 1024)).toFixed(2);
           ffmpeg(raw)
             .outputOptions([
               "-codec: copy",
-              "-hls_time 2",
+              "-hls_time 6",
+              "-hls_segment_type fmp4",
               "-hls_playlist_type vod",
               "-hls_allow_cache 1",
-              `-hls_segment_filename ${contentPath}/seg-%d.ts`,
+              `-hls_segment_filename ${contentPath}/seg-%d.m4s`,
             ])
             .output(`${contentPath}/${token}.m3u8`)
             .on("end", (err, stdout, stderr) => {
@@ -49,7 +50,7 @@ exports.add = (req, res) => {
               // update status and stream token
               Content.findByIdAndUpdate(
                 { _id: stream._id },
-                { status: true, stream: token, size }
+                { status: true, stream: token, size: size + "MB" }
               ).catch((err) => console.log(err));
             })
             .run();
@@ -87,3 +88,7 @@ exports.upload = (req, res) => {
   });
 };
 exports.delete = (req, res) => res.json({ status: true });
+exports.stream = async (req, res) => {
+  const { id } = req.params;
+  return res.json({ status: true, data: await Content.findById(id) });
+};

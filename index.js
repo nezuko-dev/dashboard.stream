@@ -4,6 +4,7 @@ const passport = require("passport");
 const cookie = require("cookie-session");
 const mongoose = require("mongoose");
 const path = require("path");
+const token = require("./src/middleware/token");
 require("dotenv").config();
 require("./passport");
 mongoose
@@ -29,6 +30,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/api", require("./src/routes"));
+app.use("/content", token, express.static(path.join(__dirname, "/content")));
 if (process.env.NODE_ENV == "production")
   app.get("*", (req, res) =>
     res.sendFile(path.join(__dirname + "/client/build/index.html"))

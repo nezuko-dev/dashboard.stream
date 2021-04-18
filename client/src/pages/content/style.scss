@@ -1,0 +1,50 @@
+.contents {
+  .ant-card-body {
+    padding: 0;
+  }
+  .ant-col {
+    padding: 0 10px;
+    margin-bottom: 20px;
+  }
+  .content-image {
+    height: 118px;
+    position: relative;
+    .content-playable {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      transition: opacity 200ms ease-in-out;
+      width: 100%;
+
+      .anticon {
+        font-size: 40px;
+        color: rgba(0, 0, 0, 0.72);
+      }
+    }
+  }
+  .content-detail {
+    border-top: 1px solid #f0f0f0;
+    padding: 13px 16px;
+    & > * {
+      font-weight: 500;
+      overflow: hidden;
+      position: relative;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .content-title {
+      color: rgba(0, 0, 0, 0.72);
+      line-height: 20px;
+      cursor: default;
+      font-size: 13px;
+    }
+    .content-status {
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
+}
