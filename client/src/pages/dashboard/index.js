@@ -26,7 +26,7 @@ const Dashboard = () => {
         title: "Нийт контент",
         count: 0,
         icon: <VideoCameraTwoTone />,
-        path: "/content",
+        path: "/contents",
       },
       {
         key: "invoices",

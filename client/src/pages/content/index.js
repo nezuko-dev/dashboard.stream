@@ -62,7 +62,7 @@ const Content = () => {
                   <Col xs={24} md={12} xl={6} xxl={5} key={content._id}>
                     <Card>
                       <div className="content-image">
-                        {content.status ? (
+                        {content.status === "ready" ? (
                           <Link
                             to={`/stream/${content._id}`}
                             className="content-playable"
@@ -77,8 +77,9 @@ const Content = () => {
                         <div className="content-detail">
                           <div className="content-title">{content.name}</div>
                           <div className="content-status">
-                            {moment(content.created).fromNow()}{" "}
-                            {content.status ? " • " + content.size : null}
+                            {moment(content.created).fromNow() +
+                              " • " +
+                              content.size}
                           </div>
                         </div>
                       </div>
@@ -135,6 +136,7 @@ const Content = () => {
                   setLoading(false);
                   OpenModal(false);
                   form.resetFields();
+                  load();
                 }
               })
               .catch((err) => {

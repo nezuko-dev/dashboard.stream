@@ -30,28 +30,42 @@ exports.add = (req, res) => {
     fs.pathExists(raw, (err, exists) => {
       if (exists) {
         Content.create({ name, editor: req.user.id }).then((stream) => {
-          var token = crypto.randomBytes(20).toString("hex");
           const contentPath = path.join(streamPath, stream._id.toString());
           fs.ensureDir(contentPath);
           var size = (fs.statSync(raw).size / (1024 * 1024)).toFixed(2);
           ffmpeg(raw)
             .outputOptions([
-              "-codec: copy",
-              "-hls_time 6",
+              "-map 0:v:0",
+              "-map 0:a:0",
+              "-map 0:v:0",
+              "-map 0:a:0",
+              "-map 0:v:0",
+              "-map 0:a:0",
+              "-filter:v:0 scale=-2:360",
+              "-b:a:0 64k",
+              "-filter:v:1 scale=-2:480",
+              "-b:a:1 128k",
+              "-filter:v:2 scale=-2:720",
+              "-b:a:2 128k",
+              "-f hls",
+              "-hls_time 10",
               "-hls_segment_type fmp4",
               "-hls_playlist_type vod",
               "-hls_allow_cache 1",
-              `-hls_segment_filename ${contentPath}/seg-%d.m4s`,
+              "-hls_flags independent_segments",
+              `-master_pl_name master.m3u8`,
             ])
-            .output(`${contentPath}/${token}.m3u8`)
+            .outputOption("-var_stream_map", "v:0,a:0, v:1,a:1 v:2,a:2")
+            .output(`${contentPath}/seg-%v.m3u8`)
             .on("end", (err, stdout, stderr) => {
+              console.log("Converted file " + raw + " Removing...");
               // remove file
               fs.removeSync(raw);
               // update status and stream token
               Content.findByIdAndUpdate(
                 { _id: stream._id },
-                { status: true, stream: token, size: size + "MB" }
-              ).catch((err) => console.log(err));
+                { status: "ready", size: size + "MB" }
+              ).catch((err) => console.log("Failed " + err));
             })
             .run();
           return res.json({ status: true });

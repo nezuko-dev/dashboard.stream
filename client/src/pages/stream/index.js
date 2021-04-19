@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
+import { message } from "antd";
 import HLS from "hls.js";
-import ReactHlsPlayer from "react-hls-player";
 import "./style.scss";
 const Stream = ({ match }) => {
   const { id } = match.params;
@@ -15,9 +15,14 @@ const Stream = ({ match }) => {
   useEffect(() => {
     if (video && state) {
       if (HLS.isSupported()) {
-        var hls = new HLS();
-        hls.loadSource(`/content/stream/${id}/${state.stream}.m3u8`);
+        var hls = new HLS({ debug: true, maxBufferSize: "2MB" });
+        hls.loadSource(`/content/stream/${id}/master.m3u8`);
         hls.attachMedia(video.current);
+      } else if (video.current.canPlayType("application/vnd.apple.mpegurl")) {
+        message.info("Loading...");
+        video.current.src = `/content/stream/${id}/master.m3u8`;
+      } else {
+        message.error("HLS not supported");
       }
     }
   });
