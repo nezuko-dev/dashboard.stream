@@ -59,10 +59,14 @@ exports.add = (req, res) => {
               `-master_pl_name master.nez`,
             ])
             .outputOption("-var_stream_map", "v:0,a:0, v:1,a:1 v:2,a:2 v:3,a:3")
-            .output(`${contentPath}/seg-%v.nez`)
+            .output(`${contentPath}/%v/media.nez`)
             .on("end", (err, stdout, stderr) => {
               console.log("Converted file " + raw + " Removing...");
               // remove file
+              fs.copy(
+                `${contentPath}/master.nez`,
+                `${contentPath}/mobile.m3u8`
+              );
               fs.removeSync(raw);
               // update status and stream token
               Content.findByIdAndUpdate(
