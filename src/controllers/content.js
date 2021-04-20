@@ -41,22 +41,25 @@ exports.add = (req, res) => {
               "-map 0:a:0",
               "-map 0:v:0",
               "-map 0:a:0",
+              "-map 0:v:0",
+              "-map 0:a:0",
               "-filter:v:0 scale=-2:360",
-              "-b:a:0 64k",
+              "-b:a:0 128k",
               "-filter:v:1 scale=-2:480",
               "-b:a:1 128k",
               "-filter:v:2 scale=-2:720",
-              "-b:a:2 128k",
+              "-b:a:2 192k",
+              "-filter:v:3 scale=-2:1080",
+              "-b:a:3 192k",
               "-f hls",
               "-hls_time 10",
               "-hls_segment_type fmp4",
               "-hls_playlist_type vod",
-              "-hls_allow_cache 1",
               "-hls_flags independent_segments",
-              `-master_pl_name master.m3u8`,
+              `-master_pl_name master.nez`,
             ])
-            .outputOption("-var_stream_map", "v:0,a:0, v:1,a:1 v:2,a:2")
-            .output(`${contentPath}/seg-%v.m3u8`)
+            .outputOption("-var_stream_map", "v:0,a:0, v:1,a:1 v:2,a:2 v:3,a:3")
+            .output(`${contentPath}/seg-%v.nez`)
             .on("end", (err, stdout, stderr) => {
               console.log("Converted file " + raw + " Removing...");
               // remove file
