@@ -13,13 +13,15 @@ const ffmpeg = require("fluent-ffmpeg");
 const streamPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/stream/`);
 fs.ensureDir(streamPath);
 
-exports.index = async (req, res) =>
-  res.json({
+exports.index = async (req, res) => {
+  const { status } = req.query;
+  return res.json({
     status: true,
     data: await Content.find(
-      req.user.role === "admin" ? {} : { editor: req.user.id }
+      req.user.role === "admin" ? { status } : { editor: req.user.id, status }
     ),
   });
+};
 exports.add = (req, res) => {
   const { name, filename } = req.body;
   const errors = validationResult(req);
@@ -72,6 +74,16 @@ exports.add = (req, res) => {
               Content.findByIdAndUpdate(
                 { _id: stream._id },
                 { status: "ready", size: size + "MB" }
+              ).catch((err) => console.log("Failed " + err));
+            })
+            .on("error", (err, stdout, stderr) => {
+              console.log("Invalid file " + raw + " Removing...");
+
+              fs.removeSync(raw);
+              // update status and stream token
+              Content.findByIdAndUpdate(
+                { _id: stream._id },
+                { status: "failed", size: 0 }
               ).catch((err) => console.log("Failed " + err));
             })
             .run();

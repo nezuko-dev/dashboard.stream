@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Card,
   Button,
@@ -15,24 +15,38 @@ import {
 import { UploadOutlined, PlayCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
-import { Link } from "react-router-dom";
-
+import HLS from "hls.js";
 import "./style.scss";
 const Content = () => {
+  const video = useRef(null);
   const [state, setState] = useState(null);
   const [modal, OpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setError] = useState(null);
   const [form] = Form.useForm();
-  const load = () => {
+  const [stream, setStream] = useState(null);
+  const load = (key) => {
     setState(null);
     axios
-      .get("/api/content")
+      .get("/api/content", { params: { status: key || "ready" } })
       .then((response) => {
         if (response.data.status) setState(response.data.data);
       })
       .catch((err) => message.error("Хүсэлт амжилтүй"));
   };
+  useEffect(() => {
+    if (stream) {
+      if (HLS.isSupported()) {
+        var hls = new HLS({ maxBufferSize: 1 });
+        hls.loadSource(`/content/stream/${stream._id}/master.nez`);
+        hls.attachMedia(video.current);
+      } else if (video.current.canPlayType("application/vnd.apple.mpegurl")) {
+        video.current.src = `/content/stream/${stream._id}/mobile.m3u8`;
+      } else {
+        message.error("Not Supported Device");
+      }
+    }
+  }, [stream]);
   const Add = () => (
     <Button
       type="primary"
@@ -48,11 +62,24 @@ const Content = () => {
   return (
     <>
       <div className="content">
-        <Card>
-          <div className="title-container">
-            <span className="page-title">Контент</span>
-            <Add />
-          </div>
+        <Card
+          tabBarExtraContent={<Add />}
+          onTabChange={(key) => load(key)}
+          tabList={[
+            {
+              key: "ready",
+              tab: "Бэлэн",
+            },
+            {
+              key: "processing",
+              tab: "Боловсруулагдаж буй",
+            },
+            {
+              key: "failed",
+              tab: "Амжилтгүй",
+            },
+          ]}
+        >
           {state ? (
             state.length === 0 ? (
               <Empty />
@@ -63,12 +90,12 @@ const Content = () => {
                     <Card>
                       <div className="content-image">
                         {content.status === "ready" ? (
-                          <Link
-                            to={`/stream/${content._id}`}
+                          <div
                             className="content-playable"
+                            onClick={() => setStream(content)}
                           >
                             <PlayCircleFilled />
-                          </Link>
+                          </div>
                         ) : (
                           <div className="content-processing"></div>
                         )}
@@ -209,6 +236,17 @@ const Content = () => {
             </Upload>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        title={stream ? stream.name : "N/A"}
+        visible={stream ? true : false}
+        onCancel={() => setStream(null)}
+        footer={null}
+        className="custom-modal"
+        width={800}
+        centered
+      >
+        <video ref={video} controls className="stream-video" />
       </Modal>
     </>
   );

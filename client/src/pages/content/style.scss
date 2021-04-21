@@ -10,6 +10,7 @@
     height: 118px;
     position: relative;
     .content-playable {
+      cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -47,4 +48,18 @@
       line-height: 20px;
     }
   }
+}
+.content {
+  .ant-tabs-ink-bar {
+    height: 3px !important;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+  }
+  .ant-tabs-tab-btn {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+.stream-video {
+  width: 100%;
 }

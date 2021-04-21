@@ -17,7 +17,6 @@ import {
   Admin,
   Title,
   Content,
-  Stream,
 } from "pages";
 // context
 import { User } from "context/user";
@@ -95,7 +94,6 @@ const App = () => {
                   <PrivateRoute path="/admins" exact component={Admin} />
                   <PrivateRoute path="/titles" exact component={Title} />
                   <PrivateRoute path="/contents" exact component={Content} />
-                  <PrivateRoute path="/stream/:id" exact component={Stream} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>
