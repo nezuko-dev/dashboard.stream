@@ -75,7 +75,7 @@ a:visited {
   cursor: pointer;
   transition: all 0.3s;
 }
-.ant-btn {
+.ant-btn:not(.ant-btn-circle) {
   border-radius: 4px;
 }
 .ant-modal-header {

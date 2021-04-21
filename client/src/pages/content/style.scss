@@ -48,6 +48,11 @@
       line-height: 20px;
     }
   }
+  .content-action {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
 }
 .content {
   .ant-tabs-ink-bar {

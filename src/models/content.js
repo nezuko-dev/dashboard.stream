@@ -9,7 +9,7 @@ const contentSchema = new mongoose.Schema({
   },
   status: { type: String, default: "processing" },
   editor: { type: mongoose.Schema.ObjectId, ref: "admin", required: true },
-  size: { type: String, default: null },
+  size: { type: String, default: "0" },
   created: { type: Date, default: Date.now },
 });
 

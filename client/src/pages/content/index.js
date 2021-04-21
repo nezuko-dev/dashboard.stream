@@ -11,8 +11,15 @@ import {
   Empty,
   Row,
   Col,
+  Dropdown,
+  Menu,
 } from "antd";
-import { UploadOutlined, PlayCircleFilled } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  PlayCircleFilled,
+  MoreOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
 import HLS from "hls.js";
@@ -108,6 +115,52 @@ const Content = () => {
                               " • " +
                               content.size}
                           </div>
+                        </div>
+                      </div>
+                      <div className="content-action">
+                        <div>
+                          <Dropdown
+                            overlay={
+                              <Menu>
+                                <Menu.Item>Засах</Menu.Item>
+                                <Menu.Item>
+                                  <Upload
+                                    action="/api/content/image"
+                                    maxCount={1}
+                                    accept="image/*"
+                                  >
+                                    Зураг нэмэх
+                                  </Upload>
+                                </Menu.Item>
+                                <Menu.Item
+                                  danger
+                                  onClick={() =>
+                                    Modal.confirm({
+                                      title: "Анхааруулга",
+                                      icon: <ExclamationCircleOutlined />,
+                                      content:
+                                        "Та устгахдаа итгэлтэй байна уу?",
+                                      okText: "Tийм",
+                                      cancelText: "Буцах",
+                                      onOk: () => {
+                                        axios
+                                          .delete(`/api/content/${content._id}`)
+                                          .then((response) => {
+                                            if (response.data.status) {
+                                              load();
+                                            }
+                                          });
+                                      },
+                                    })
+                                  }
+                                >
+                                  Устгах
+                                </Menu.Item>
+                              </Menu>
+                            }
+                          >
+                            <Button shape="circle" icon={<MoreOutlined />} />
+                          </Dropdown>
                         </div>
                       </div>
                     </Card>

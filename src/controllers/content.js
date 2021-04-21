@@ -120,7 +120,19 @@ exports.upload = (req, res) => {
     }
   });
 };
-exports.delete = (req, res) => res.json({ status: true });
+exports.delete = (req, res) => {
+  const { id } = req.params;
+  if (ObjectId.isValid(id)) {
+    Content.deleteOne({ _id: id }, (err) => {
+      if (err) return res.json({ status: false });
+      else {
+        var remove = streamPath + id;
+        fs.removeSync(remove);
+        return res.json({ status: true });
+      }
+    });
+  } else return res.status(400).json({ status: false });
+};
 exports.stream = async (req, res) => {
   const { id } = req.params;
   return res.json({ status: true, data: await Content.findById(id) });
