@@ -14,6 +14,7 @@ import {
   Dropdown,
   Menu,
 } from "antd";
+import ImgCrop from "antd-img-crop";
 import {
   UploadOutlined,
   PlayCircleFilled,
@@ -32,6 +33,12 @@ const Content = () => {
   const [errors, setError] = useState(null);
   const [form] = Form.useForm();
   const [stream, setStream] = useState(null);
+  const destroy = () => {
+    window.hls.stopLoad();
+    window.hls.detachMedia();
+    window.hls.destroy();
+  };
+
   const load = (key) => {
     setState(null);
     axios
@@ -42,11 +49,13 @@ const Content = () => {
       .catch((err) => message.error("Хүсэлт амжилтүй"));
   };
   useEffect(() => {
+    console.log(stream);
     if (stream) {
       if (HLS.isSupported()) {
-        var hls = new HLS({ maxBufferSize: 1 });
-        hls.loadSource(`/content/stream/${stream._id}/master.nez`);
-        hls.attachMedia(video.current);
+        if (window.hls) destroy();
+        window.hls = new HLS({ maxBufferSize: 1 });
+        window.hls.loadSource(`/content/stream/${stream._id}/master.nez`);
+        window.hls.attachMedia(video.current);
       } else if (video.current.canPlayType("application/vnd.apple.mpegurl")) {
         video.current.src = `/content/stream/${stream._id}/mobile.m3u8`;
       } else {
@@ -124,13 +133,15 @@ const Content = () => {
                               <Menu>
                                 <Menu.Item>Засах</Menu.Item>
                                 <Menu.Item>
-                                  <Upload
-                                    action="/api/content/image"
-                                    maxCount={1}
-                                    accept="image/*"
-                                  >
-                                    Зураг нэмэх
-                                  </Upload>
+                                  <ImgCrop aspect={16 / 9}>
+                                    <Upload
+                                      action={`/api/content/image/${content._id}`}
+                                      maxCount={1}
+                                      accept="image/jpeg,png"
+                                    >
+                                      Зураг нэмэх
+                                    </Upload>
+                                  </ImgCrop>
                                 </Menu.Item>
                                 <Menu.Item
                                   danger
@@ -293,7 +304,10 @@ const Content = () => {
       <Modal
         title={stream ? stream.name : "N/A"}
         visible={stream ? true : false}
-        onCancel={() => setStream(null)}
+        onCancel={() => {
+          setStream(null);
+          destroy();
+        }}
         footer={null}
         className="custom-modal"
         width={800}

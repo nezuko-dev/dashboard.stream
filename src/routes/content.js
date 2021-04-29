@@ -14,6 +14,11 @@ router.post(
   busboy({ highWaterMark: 2 * 1024 * 1024 }),
   content.upload
 );
+router.post(
+  "/image/:id",
+  busboy({ highWaterMark: 2 * 1024 * 1024 }),
+  content.image
+);
 router.post("/", validator.content, content.add);
 router.get("/:id", content.stream);
 router.delete("/:id", content.delete);
