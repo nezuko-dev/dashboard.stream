@@ -262,7 +262,11 @@ exports.image = (req, res) => {
           .resize(341, 192)
           .toFile(path.join(imagePath, `sm-${name}`));
         // do not store junks
-        Content.findById(id)
+        Content.findOone(
+          req.user.role === "admin"
+            ? { _id: id }
+            : { editor: req.user.id, _id: id }
+        )
           .select("thumbnail")
           .then((data) => {
             const { sm, original } = data.thumbnail;
@@ -278,22 +282,27 @@ exports.image = (req, res) => {
                 sm.split("/")[original.split("/").length - 1]
               )
             );
-          });
-        // remove it
-        fs.removeSync(image);
-        // save it
-        Content.findOneAndUpdate(
-          req.user.role === "admin"
-            ? { _id: id }
-            : { editor: req.user.id, _id: id },
-          {
-            "thumbnail.sm": `/content/images/sm-${name}`,
-            "thumbnail.original": `/content/images/original-${name}`,
-          }
-        )
-          .then(() => res.json({ status: true, filename: name }))
+            fs.removeSync(image);
+
+            data.thumbnail.sm = `/content/images/sm-${name}`;
+            data.thumbnail.original = `/content/images/original-${name}`;
+            data.save(() => res.json({ status: true, filename: name }));
+          })
           .catch((err) => res.json({ status: false }));
       });
     }
   });
+};
+exports.update = (req, res) => {
+  const { id: _id } = req.params;
+  const { name } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: false, errors: errors.array() });
+  } else {
+    Content.findOneAndUpdate(
+      req.user.role === "admin" ? { _id } : { editor: req.user.id, _id: id },
+      { name }
+    ).then(() => res.json({ status: true }));
+  }
 };

@@ -76,3 +76,8 @@ exports.content = [
     .isLength({ min: 24 })
     .withMessage("Алдаатай файлын зам илгээсэн байна."),
 ];
+exports.content_update = [
+  check("name")
+    .isLength({ min: 2, max: 32 })
+    .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
+];

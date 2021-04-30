@@ -20,6 +20,7 @@ router.post(
   content.image
 );
 router.post("/", validator.content, content.add);
+router.post("/:id", validator.content_update, content.update);
 router.get("/:id", content.stream);
 router.delete("/:id", content.delete);
 module.exports = router;

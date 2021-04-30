@@ -33,6 +33,7 @@ const Content = () => {
   const [errors, setError] = useState(null);
   const [form] = Form.useForm();
   const [stream, setStream] = useState(null);
+  const [edit, setEdit] = useState(null);
   const destroy = () => {
     window.hls.stopLoad();
     window.hls.detachMedia();
@@ -48,6 +49,12 @@ const Content = () => {
       })
       .catch((err) => message.error("Хүсэлт амжилтүй"));
   };
+  useEffect(() => {
+    if (!edit) {
+      form.resetFields();
+    }
+    form.setFieldsValue(edit);
+  }, [form, edit]);
   useEffect(() => {
     if (stream) {
       if (HLS.isSupported()) {
@@ -139,7 +146,9 @@ const Content = () => {
                               trigger="click"
                               overlay={
                                 <Menu>
-                                  <Menu.Item>Засах</Menu.Item>
+                                  <Menu.Item onClick={() => setEdit(content)}>
+                                    Засах
+                                  </Menu.Item>
                                   <Menu.Item>
                                     <ImgCrop aspect={16 / 9}>
                                       <Upload
@@ -203,9 +212,12 @@ const Content = () => {
       </div>
       {/* add content modal */}
       <Modal
-        visible={modal}
-        title={"Контент нэмэх"}
-        onCancel={() => OpenModal(false)}
+        visible={modal || edit ? true : false}
+        title={edit ? "Контент засах" : "Контент нэмэх"}
+        onCancel={() => {
+          if (edit) setEdit(null);
+          OpenModal(false);
+        }}
         onOk={() => form.submit()}
         okText="Хадгалах"
         cancelText="Буцах"
@@ -224,23 +236,25 @@ const Content = () => {
           form={form}
           layout="vertical"
           className="custom-form"
-          //   initialValues={edit}
+          initialValues={edit}
           onFinish={(values) => {
             setError(null);
             setLoading(true);
-
             axios
-              .post("/api/content", {
+              .post(`/api/content${edit ? `/${edit._id}` : ""}`, {
                 name: values.name,
-                filename: values.file.file.response.filename,
+                filename: !edit && values.file.file.response.filename,
               })
               .then((response) => {
                 if (response.data.status) {
                   message.success(
-                    "Контент амжилттай нэмэгдлээ хөрвүүлж дуустал түр хүлээнэ үү."
+                    edit
+                      ? "Амжилттай."
+                      : "Контент амжилттай нэмэгдлээ хөрвүүлж дуустал түр хүлээнэ үү."
                   );
                   setLoading(false);
                   OpenModal(false);
+                  setEdit(null);
                   form.resetFields();
                   load();
                 }
@@ -274,46 +288,48 @@ const Content = () => {
           >
             <Input placeholder="Нэр" size="large" />
           </Form.Item>
-          <Form.Item
-            name="file"
-            rules={[
-              {
-                required: true,
-                message: "Контент байршуулна уу!",
-              },
-            ]}
-            valuePropName="file"
-            {...(errors && errors.find((error) => error.param === "file")
-              ? {
-                  help: errors.find((error) => error.param === "file").msg,
-                  validateStatus: "error",
-                }
-              : null)}
-          >
-            <Upload
-              action="/api/content/upload"
-              maxCount={1}
-              accept="video/*,.mkv"
-              onRemove={() => setLoading(false)}
-              onChange={(info) => {
-                if (info.file.status === "uploading") {
-                  setLoading(true);
-                }
-                if (info.file.status === "done") {
-                  setLoading(false);
-                } else if (info.file.status === "error") {
-                  setLoading(false);
-                  message.error(`Байршуулах хүсэлт амжилтгүй боллоо.`);
-                }
-              }}
+          {edit === null ? (
+            <Form.Item
+              name="file"
+              rules={[
+                {
+                  required: true,
+                  message: "Контент байршуулна уу!",
+                },
+              ]}
+              valuePropName="file"
+              {...(errors && errors.find((error) => error.param === "file")
+                ? {
+                    help: errors.find((error) => error.param === "file").msg,
+                    validateStatus: "error",
+                  }
+                : null)}
             >
-              {!loading ? (
-                <Button size="large" icon={<UploadOutlined />}>
-                  Контент байршуулах
-                </Button>
-              ) : null}
-            </Upload>
-          </Form.Item>
+              <Upload
+                action="/api/content/upload"
+                maxCount={1}
+                accept="video/*,.mkv"
+                onRemove={() => setLoading(false)}
+                onChange={(info) => {
+                  if (info.file.status === "uploading") {
+                    setLoading(true);
+                  }
+                  if (info.file.status === "done") {
+                    setLoading(false);
+                  } else if (info.file.status === "error") {
+                    setLoading(false);
+                    message.error(`Байршуулах хүсэлт амжилтгүй боллоо.`);
+                  }
+                }}
+              >
+                {!loading ? (
+                  <Button size="large" icon={<UploadOutlined />}>
+                    Контент байршуулах
+                  </Button>
+                ) : null}
+              </Upload>
+            </Form.Item>
+          ) : null}
         </Form>
       </Modal>
       <Modal
