@@ -5,13 +5,13 @@ const crypto = require("crypto");
 // file
 const path = require("path");
 const fs = require("fs-extra");
+const sharp = require("sharp");
 const uploadPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/raw/`);
 const imagePath = path.join(__dirname, `${process.env.UPLOAD_PATH}/images/`);
 fs.ensureDir(uploadPath);
 fs.ensureDir(imagePath);
 // stream and ffmpeg config
 const ffmpeg = require("fluent-ffmpeg");
-
 const streamPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/stream/`);
 fs.ensureDir(streamPath);
 
@@ -115,15 +115,28 @@ exports.add = (req, res) => {
               });
             });
           };
-          optionSync().then((option) => {
+          optionSync().then(async (option) => {
             var output = option.output.concat([
               "-f hls",
-              "-hls_time 10",
+              "-hls_time 2",
               "-hls_segment_type fmp4",
               "-hls_playlist_type vod",
               "-hls_flags independent_segments",
               `-master_pl_name master.nez`,
             ]);
+            var name = `${crypto.randomBytes(12).toString("hex")}.png`;
+            await ffmpeg(raw).screenshots({
+              timestamps: ["30"],
+              filename: `original-${name}`,
+              folder: imagePath,
+              size: "1280x720",
+            });
+            await ffmpeg(raw).screenshots({
+              timestamps: ["30"],
+              filename: `sm-${name}`,
+              folder: imagePath,
+              size: "341x192",
+            });
             ffmpeg(raw)
               .outputOptions(output)
               .outputOption("-var_stream_map", option.map)
@@ -139,7 +152,12 @@ exports.add = (req, res) => {
                 // update status and stream token
                 Content.findByIdAndUpdate(
                   { _id: stream._id },
-                  { status: "ready", size: size + "MB" }
+                  {
+                    status: "ready",
+                    size: size + "MB",
+                    "thumbnail.sm": `/content/images/sm-${name}`,
+                    "thumbnail.original": `/content/images/original-${name}`,
+                  }
                 ).catch((err) => console.log("Failed " + err));
               })
               .on("error", (err, stdout, stderr) => {
@@ -217,13 +235,46 @@ exports.image = (req, res) => {
       var name = `${crypto.randomBytes(12).toString("hex")}.${filename
         .split(".")
         [filename.split(".").length - 1].toLowerCase()}`;
-      const fstream = fs.createWriteStream(path.join(imagePath, name));
+      const fstream = fs.createWriteStream(path.join(uploadPath, name));
       // Pipe it trough
-      console.log(file);
       file.pipe(fstream);
       // On finish of the upload
-      fstream.on("close", () => res.json({ status: true, filename: name }));
-      ``;
+      fstream.on("close", async () => {
+        var image = path.join(uploadPath, name);
+        await sharp(image)
+          .resize(1280, 720)
+          .toFile(path.join(imagePath, `original-${name}`));
+        await sharp(image)
+          .resize(341, 192)
+          .toFile(path.join(imagePath, `sm-${name}`));
+        // do not store junks
+        Content.findById(id)
+          .select("thumbnail")
+          .then((data) => {
+            const { sm, original } = data.thumbnail;
+            fs.removeSync(
+              path.join(
+                imagePath,
+                original.split("/")[original.split("/").length - 1]
+              )
+            );
+            fs.removeSync(
+              path.join(
+                imagePath,
+                sm.split("/")[original.split("/").length - 1]
+              )
+            );
+          });
+        // remove it
+        fs.removeSync(image);
+        // save it
+        Content.findByIdAndUpdate(id, {
+          "thumbnail.sm": `/content/images/sm-${name}`,
+          "thumbnail.original": `/content/images/original-${name}`,
+        })
+          .then(() => res.json({ status: true, filename: name }))
+          .catch((err) => res.json({ status: false }));
+      });
     }
   });
 };

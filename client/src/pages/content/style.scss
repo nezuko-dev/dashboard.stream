@@ -7,6 +7,16 @@
     margin-bottom: 20px;
   }
   .content-image {
+    .thumbnail {
+      height: 100%;
+      .thumbnail-image {
+        height: 100%;
+        width: 100%;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        object-fit: cover;
+      }
+    }
     height: 118px;
     position: relative;
     .content-playable {
@@ -22,7 +32,7 @@
 
       .anticon {
         font-size: 40px;
-        color: rgba(0, 0, 0, 0.72);
+        color: rgba(255, 255, 255, 0.72);
       }
     }
   }

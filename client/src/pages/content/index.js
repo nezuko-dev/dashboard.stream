@@ -49,7 +49,6 @@ const Content = () => {
       .catch((err) => message.error("Хүсэлт амжилтүй"));
   };
   useEffect(() => {
-    console.log(stream);
     if (stream) {
       if (HLS.isSupported()) {
         if (window.hls) destroy();
@@ -106,11 +105,18 @@ const Content = () => {
                     <Card>
                       <div className="content-image">
                         {content.status === "ready" ? (
-                          <div
-                            className="content-playable"
-                            onClick={() => setStream(content)}
-                          >
-                            <PlayCircleFilled />
+                          <div className="thumbnail">
+                            <img
+                              className="thumbnail-image"
+                              src={content.thumbnail.sm}
+                              alt={(content.name, " thumbnail")}
+                            />
+                            <div
+                              className="content-playable"
+                              onClick={() => setStream(content)}
+                            >
+                              <PlayCircleFilled />
+                            </div>
                           </div>
                         ) : (
                           <div className="content-processing"></div>
@@ -129,6 +135,7 @@ const Content = () => {
                       <div className="content-action">
                         <div>
                           <Dropdown
+                            trigger="click"
                             overlay={
                               <Menu>
                                 <Menu.Item>Засах</Menu.Item>
@@ -137,9 +144,9 @@ const Content = () => {
                                     <Upload
                                       action={`/api/content/image/${content._id}`}
                                       maxCount={1}
-                                      accept="image/jpeg,png"
+                                      accept="image/*"
                                     >
-                                      Зураг нэмэх
+                                      Зураг солих
                                     </Upload>
                                   </ImgCrop>
                                 </Menu.Item>
