@@ -132,55 +132,63 @@ const Content = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="content-action">
-                        <div>
-                          <Dropdown
-                            trigger="click"
-                            overlay={
-                              <Menu>
-                                <Menu.Item>Засах</Menu.Item>
-                                <Menu.Item>
-                                  <ImgCrop aspect={16 / 9}>
-                                    <Upload
-                                      action={`/api/content/image/${content._id}`}
-                                      maxCount={1}
-                                      accept="image/*"
-                                    >
-                                      Зураг солих
-                                    </Upload>
-                                  </ImgCrop>
-                                </Menu.Item>
-                                <Menu.Item
-                                  danger
-                                  onClick={() =>
-                                    Modal.confirm({
-                                      title: "Анхааруулга",
-                                      icon: <ExclamationCircleOutlined />,
-                                      content:
-                                        "Та устгахдаа итгэлтэй байна уу?",
-                                      okText: "Tийм",
-                                      cancelText: "Буцах",
-                                      onOk: () => {
-                                        axios
-                                          .delete(`/api/content/${content._id}`)
-                                          .then((response) => {
-                                            if (response.data.status) {
-                                              load();
-                                            }
-                                          });
-                                      },
-                                    })
-                                  }
-                                >
-                                  Устгах
-                                </Menu.Item>
-                              </Menu>
-                            }
-                          >
-                            <Button shape="circle" icon={<MoreOutlined />} />
-                          </Dropdown>
+                      {content.status === "ready" ? (
+                        <div className="content-action">
+                          <div>
+                            <Dropdown
+                              trigger="click"
+                              overlay={
+                                <Menu>
+                                  <Menu.Item>Засах</Menu.Item>
+                                  <Menu.Item>
+                                    <ImgCrop aspect={16 / 9}>
+                                      <Upload
+                                        onChange={(info) => {
+                                          if (info.file.status === "done")
+                                            load();
+                                        }}
+                                        action={`/api/content/image/${content._id}`}
+                                        maxCount={1}
+                                        accept="image/*"
+                                      >
+                                        Зураг солих
+                                      </Upload>
+                                    </ImgCrop>
+                                  </Menu.Item>
+                                  <Menu.Item
+                                    danger
+                                    onClick={() =>
+                                      Modal.confirm({
+                                        title: "Анхааруулга",
+                                        icon: <ExclamationCircleOutlined />,
+                                        content:
+                                          "Та устгахдаа итгэлтэй байна уу?",
+                                        okText: "Tийм",
+                                        cancelText: "Буцах",
+                                        onOk: () => {
+                                          axios
+                                            .delete(
+                                              `/api/content/${content._id}`
+                                            )
+                                            .then((response) => {
+                                              if (response.data.status) {
+                                                load();
+                                              }
+                                            });
+                                        },
+                                      })
+                                    }
+                                  >
+                                    Устгах
+                                  </Menu.Item>
+                                </Menu>
+                              }
+                            >
+                              <Button shape="circle" icon={<MoreOutlined />} />
+                            </Dropdown>
+                          </div>
                         </div>
-                      </div>
+                      ) : null}
                     </Card>
                   </Col>
                 ))}

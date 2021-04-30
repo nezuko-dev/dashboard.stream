@@ -209,13 +209,27 @@ exports.upload = (req, res) => {
 exports.delete = (req, res) => {
   const { id } = req.params;
   if (ObjectId.isValid(id)) {
-    Content.deleteOne({ _id: id }, (err) => {
-      if (err) return res.json({ status: false });
-      else {
-        var remove = streamPath + id;
-        fs.removeSync(remove);
-        return res.json({ status: true });
-      }
+    Content.findOne(
+      req.user.role === "admin" ? { _id: id } : { editor: req.user.id, _id: id }
+    ).then((data) => {
+      const { sm, original } = data.thumbnail;
+      fs.removeSync(
+        path.join(
+          imagePath,
+          original.split("/")[original.split("/").length - 1]
+        )
+      );
+      fs.removeSync(
+        path.join(imagePath, sm.split("/")[original.split("/").length - 1])
+      );
+      Content.deleteOne({ _id: id }, (err) => {
+        if (err) return res.json({ status: false });
+        else {
+          var remove = streamPath + id;
+          fs.removeSync(remove);
+          return res.json({ status: true });
+        }
+      });
     });
   } else return res.status(400).json({ status: false });
 };
@@ -268,10 +282,15 @@ exports.image = (req, res) => {
         // remove it
         fs.removeSync(image);
         // save it
-        Content.findByIdAndUpdate(id, {
-          "thumbnail.sm": `/content/images/sm-${name}`,
-          "thumbnail.original": `/content/images/original-${name}`,
-        })
+        Content.findOneAndUpdate(
+          req.user.role === "admin"
+            ? { _id: id }
+            : { editor: req.user.id, _id: id },
+          {
+            "thumbnail.sm": `/content/images/sm-${name}`,
+            "thumbnail.original": `/content/images/original-${name}`,
+          }
+        )
           .then(() => res.json({ status: true, filename: name }))
           .catch((err) => res.json({ status: false }));
       });
