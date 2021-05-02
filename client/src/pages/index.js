@@ -7,7 +7,7 @@ import Dashboard from "./dashboard";
 import Settings from "./settings";
 import Genre from "./genre";
 import Admin from "./admin";
-import Title from "./titles";
+import Franchise from "./franchise";
 import Content from "./content";
 
 export {
@@ -19,6 +19,6 @@ export {
   Settings,
   Genre,
   Admin,
-  Title,
+  Franchise,
   Content,
 };
