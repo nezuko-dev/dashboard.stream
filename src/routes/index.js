@@ -9,5 +9,6 @@ router.use("/genre", token, require("./genre"));
 router.use("/dashboard", token, require("./dashboard"));
 router.use("/admin", token, require("./admin"));
 router.use("/content", token, require("./content"));
+router.use("/franchise", token, require("./franchise"));
 
 module.exports = router;

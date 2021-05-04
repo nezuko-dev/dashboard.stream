@@ -1,0 +1,15 @@
+.franchise {
+}
+.custom-form {
+  .franchise-formitem {
+    display: inline-block !important;
+    width: calc(50% - 4px);
+    margin-bottom: 0;
+    &:first-child {
+      margin-right: 8px;
+    }
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+}

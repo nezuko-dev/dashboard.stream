@@ -1,4 +1,6 @@
 const { check } = require("express-validator");
+const Genre = require("../models/genre");
+
 exports.email = [
   check("email").isEmail().withMessage("Email хаяг аа зөв оруулна уу!"),
 ];
@@ -80,4 +82,14 @@ exports.content_update = [
   check("name")
     .isLength({ min: 2, max: 32 })
     .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
+];
+exports.franchise = async = [
+  check("name")
+    .isLength({ min: 2, max: 64 })
+    .withMessage("2 - 64 тэмдэгтийн хооронд оруулна уу."),
+  check("age_rating")
+    .isFloat({ min: 0, max: 180 })
+    .withMessage("Алдаатай утга"),
+  check("genre"),
+  check("type").isIn(["movie", "series"]).withMessage("Алдаатай утга"),
 ];
