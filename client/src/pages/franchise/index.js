@@ -12,7 +12,9 @@ import {
   InputNumber,
   Select,
   Popover,
+  Space,
 } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import moment from "moment";
 import "./style.scss";
@@ -22,12 +24,13 @@ const Franchise = () => {
   const [state, setState] = useState(null);
   const [genre, setGenre] = useState(null);
   const [search, setSearch] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [modal, OpenModal] = useState(false);
   const [form] = Form.useForm();
   const [errors, setError] = useState(null);
   const [edit, setEdit] = useState(null);
-  const [loading, setLoading] = useState(false);
+
   const load = () => {
     setState(null);
     axios
@@ -70,7 +73,7 @@ const Franchise = () => {
             </div>
           }
         >
-          {text.length}
+          <Button>{text.length}</Button>
         </Popover>
       ),
     },
@@ -79,7 +82,59 @@ const Franchise = () => {
       dataIndex: "created",
       render: (text) => moment(text).fromNow(),
     },
+    {
+      title: "",
+      render: (record, text) => (
+        <Space>
+          <Button
+            type="link"
+            onClick={() => {
+              OpenModal(true);
+              setEdit(record);
+            }}
+          >
+            Засах
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() =>
+              Modal.confirm({
+                title: "Анхааруулга",
+                icon: <ExclamationCircleOutlined />,
+                content: "Та устгахдаа итгэлтэй байна уу?",
+                okText: "Tийм",
+                cancelText: "Буцах",
+                onOk: () => {
+                  axios
+                    .delete(`/api/franchise/${record._id}`)
+                    .then((response) => {
+                      if (response.data.status) {
+                        message.success("Амжилттай устгагдлаа.");
+                        load();
+                      }
+                    })
+                    .catch((err) => message.error("Хүсэлт амжилтгүй"));
+                },
+              })
+            }
+          >
+            Устгах
+          </Button>
+        </Space>
+      ),
+    },
   ];
+  useEffect(() => {
+    if (!edit) {
+      form.resetFields();
+    } else {
+      form.setFieldsValue({
+        ...edit,
+        genre: edit.genre.map((data) => data._id),
+      });
+    }
+  }, [form, edit]);
   const Add = () => (
     <Button
       type="primary"
@@ -163,7 +218,6 @@ const Franchise = () => {
           form={form}
           layout="vertical"
           className="custom-form"
-          initialValues={edit}
           autoComplete="off"
           onFinish={(values) => {
             setError(null);
