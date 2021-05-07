@@ -1,14 +1,23 @@
 const Franchise = require("../models/franchise");
+const Title = require("../models/title");
 const Genre = require("../models/genre");
 const { validationResult } = require("express-validator");
 const ObjectId = require("mongoose").Types.ObjectId;
 exports.index = async (req, res) => {
-  return res.json({
-    status: true,
-    data: await Franchise.find()
-      .sort({ created: -1 })
-      .populate("genre", "name"),
-  });
+  await Franchise.find()
+    .sort({ created: -1 })
+    .populate("genre", "name")
+    .exec()
+    .then((franchises) => {
+      return Promise.all(
+        franchises.map(async (franchise) => ({
+          ...franchise._doc,
+          titles: await Title.find({ franchise: franchise._id }),
+        }))
+      );
+    })
+    .then((data) => res.json({ status: true, data }))
+    .catch((err) => res.json({ status: false }));
 };
 exports.add = (req, res) => {
   const { name, age_rating, type, genre } = req.body;
@@ -19,6 +28,16 @@ exports.add = (req, res) => {
     Franchise.create({ name, age_rating, type, genre }).then(() =>
       res.json({ status: true })
     );
+  }
+};
+
+exports.titles = async (req, res) => {
+  const { id } = req.params;
+  if (ObjectId.isValid(id)) {
+    return res.json({
+      status: true,
+      data: await Title.find({ franchise: id }),
+    });
   }
 };
 exports.delete = (req, res) => {

@@ -15,6 +15,7 @@ import {
   LogoutOutlined,
   ExclamationCircleOutlined,
   CloudUploadOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import "./style.scss";
@@ -62,10 +63,16 @@ const Drawer = () => {
           icon: <CloudUploadOutlined />,
         },
         {
-          to: "/franchise",
+          to: "/titles",
           title: "Үзвэрүүд",
           role: ["admin"],
           icon: <PlaySquareOutlined />,
+        },
+        {
+          to: "/franchise",
+          title: "Бүлэг",
+          role: ["admin"],
+          icon: <OrderedListOutlined />,
         },
         {
           to: "/invoice",

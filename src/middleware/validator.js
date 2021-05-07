@@ -83,7 +83,7 @@ exports.content_update = [
     .isLength({ min: 2, max: 32 })
     .withMessage("2 - 32 тэмдэгтийн хооронд оруулна уу."),
 ];
-exports.franchise = async = [
+exports.franchise = [
   check("name")
     .isLength({ min: 2, max: 64 })
     .withMessage("2 - 64 тэмдэгтийн хооронд оруулна уу."),
@@ -92,4 +92,9 @@ exports.franchise = async = [
     .withMessage("Алдаатай утга"),
   check("genre"),
   check("type").isIn(["movie", "series"]).withMessage("Алдаатай утга"),
+];
+exports.title = [
+  check("name")
+    .isLength({ min: 2, max: 64 })
+    .withMessage("2 - 64 тэмдэгтийн хооронд оруулна уу."),
 ];

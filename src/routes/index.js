@@ -10,5 +10,6 @@ router.use("/dashboard", token, require("./dashboard"));
 router.use("/admin", token, require("./admin"));
 router.use("/content", token, require("./content"));
 router.use("/franchise", token, require("./franchise"));
+router.use("/titles", token, require("./title"));
 
 module.exports = router;

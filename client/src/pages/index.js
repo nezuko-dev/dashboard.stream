@@ -10,6 +10,7 @@ import Admin from "./admin";
 import Franchise from "./franchise";
 import Content from "./content";
 
+import Title from "./title";
 export {
   Auth,
   Forgot,
@@ -20,5 +21,6 @@ export {
   Genre,
   Admin,
   Franchise,
+  Title,
   Content,
 };

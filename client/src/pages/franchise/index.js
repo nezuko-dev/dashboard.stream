@@ -15,7 +15,7 @@ import {
   Space,
 } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-
+import { Link } from "react-router-dom";
 import moment from "moment";
 import "./style.scss";
 import axios from "axios";
@@ -30,7 +30,6 @@ const Franchise = () => {
   const [form] = Form.useForm();
   const [errors, setError] = useState(null);
   const [edit, setEdit] = useState(null);
-
   const load = () => {
     setState(null);
     axios
@@ -60,6 +59,11 @@ const Franchise = () => {
       dataIndex: "type",
     },
     {
+      title: "Үүсгэсэн огноо",
+      dataIndex: "created",
+      render: (text) => moment(text).fromNow(),
+    },
+    {
       title: "Ангилал",
       dataIndex: "genre",
       render: (text) => (
@@ -78,9 +82,15 @@ const Franchise = () => {
       ),
     },
     {
-      title: "Үүсгэсэн огноо",
-      dataIndex: "created",
-      render: (text) => moment(text).fromNow(),
+      title: "Нийт үзвэрүүд",
+      dataIndex: "titles",
+      render: (text, record) => (
+        <Button type={text.length === 0 ? "primary" : "secondary"}>
+          <Link to={`/titles/${record._id}${text.length === 0 ? "?new" : ""}`}>
+            {text.length || "Нэмэх"}
+          </Link>
+        </Button>
+      ),
     },
     {
       title: "",
@@ -155,13 +165,13 @@ const Franchise = () => {
           {state ? (
             <>
               <div className="title-container">
-                <span className="page-title">Үзвэр</span>
+                <span className="page-title">Бүлэг</span>
                 <Add />
               </div>
               <div className="">
                 <Form.Item>
                   <Input
-                    placeholder="Үзвэр хайх"
+                    placeholder="Бүлэг хайх"
                     size="large"
                     className="custom-input"
                     autoFocus={true}
