@@ -37,7 +37,7 @@ const Title = (props) => {
   const [form] = Form.useForm();
   const [edit, setEdit] = useState(null);
   const [paid, setPaid] = useState(false);
-  const [contents, setContents] = useState(null);
+  const [contents, setContents] = useState([]);
   const load = (status) => {
     setState(null);
     if (id) {
@@ -352,21 +352,7 @@ const Title = (props) => {
           </Form.Item>
           <Divider dashed />
           <Title level={5}>Tөлбөрийн мэдээлэл</Title>
-          <Form.Item
-            name="policy"
-            rules={[
-              {
-                required: true,
-                message: "Заавал бөглөнө үү.",
-              },
-            ]}
-            {...(errors && errors.find((error) => error.param === "policy")
-              ? {
-                  help: errors.find((error) => error.param === "policy").msg,
-                  validateStatus: "error",
-                }
-              : null)}
-          >
+          <Form.Item name="policy">
             <div className="policy">
               <span>Tөлбөртэй контент</span>
               <Switch onChange={(e) => setPaid(e)} />
@@ -390,8 +376,7 @@ const Title = (props) => {
                 : null)}
             >
               <InputNumber
-                min={1000}
-                max={1000000}
+                min={1}
                 className="custom-number-input"
                 placeholder="Үнэ"
                 size="large"
@@ -401,7 +386,7 @@ const Title = (props) => {
           <Divider dashed />
           <Title level={5}>Ангиуд</Title>
           <Form.List
-            name="names"
+            name="episodes"
             rules={[
               {
                 validator: async (_, names) => {
@@ -418,69 +403,74 @@ const Title = (props) => {
               <>
                 {fields.map((field, index) => (
                   <Form.Item required={false} key={field.key}>
-                    {
-                      <Row gutter={16}>
-                        <Col span={12}>
-                          <Form.Item
-                            rules={[
-                              {
-                                required: true,
-                                message: "Ангын нэр оруулна уу.",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Content" size="large" />
-                          </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                          <Form.Item
-                            rules={[
-                              {
-                                required: true,
-                                message: "Контент сонгоно уу.",
-                              },
-                            ]}
-                          >
-                            <Select
-                              showSearch
-                              placeholder="Контент хайх"
-                              onSearch={(value) => {
-                                if (value) {
-                                  axios
-                                    .post("/api/content/search", {
-                                      value: value,
-                                    })
-                                    .then((response) => {
-                                      if (response.data.status)
-                                        setContents(response.data.data);
-                                    });
-                                }
-                              }}
-                              notFoundContent={null}
-                              size="large"
-                              className="custom-select"
+                    <Row gutter={16}>
+                      {
+                        <>
+                          <Col span={11}>
+                            <Form.Item
+                              name="name"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Ангийн нэр оруулна уу.",
+                                },
+                              ]}
                             >
-                              {contents
-                                ? contents.map((content) => (
-                                    <Option
-                                      value={content._id}
-                                      key={content._id}
-                                    >
-                                      {content.name}
-                                    </Option>
-                                  ))
-                                : null}
-                            </Select>
-                          </Form.Item>
+                              <Input placeholder="Нэр" size="large" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={11}>
+                            <Form.Item
+                              name="content"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Контент сонгоно уу.",
+                                },
+                              ]}
+                            >
+                              <Select
+                                showSearch
+                                filterOption={false}
+                                notFoundContent={null}
+                                defaultActiveFirstOption={false}
+                                showArrow={false}
+                                placeholder="Контент хайх"
+                                onSearch={(value) => {
+                                  if (value) {
+                                    axios
+                                      .post("/api/content/search", {
+                                        value: value,
+                                      })
+                                      .then((response) => {
+                                        if (response.data.status)
+                                          setContents(response.data.data);
+                                        else setContents([]);
+                                      });
+                                  } else setContents([]);
+                                }}
+                                size="large"
+                                className="custom-select"
+                              >
+                                {contents.map((content) => (
+                                  <Option value={content._id} key={content._id}>
+                                    {content.name}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                        </>
+                      }
+                      {fields.length > 1 ? (
+                        <Col span={2}>
+                          <MinusCircleOutlined
+                            className="dynamic-delete-button"
+                            onClick={() => remove(field.name)}
+                          />
                         </Col>
-                      </Row>
-                    }
-                    {fields.length > 1 ? (
-                      <MinusCircleOutlined
-                        className="dynamic-delete-button"
-                        onClick={() => remove(field.name)}
-                      />
-                    ) : null}
+                      ) : null}
+                    </Row>
                   </Form.Item>
                 ))}
                 <Form.Item>

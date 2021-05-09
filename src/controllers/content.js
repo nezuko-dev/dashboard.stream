@@ -293,7 +293,8 @@ exports.update = (req, res) => {
   }
 };
 exports.search = (req, res) => {
-  Content.find({ name: /op/i })
+  Content.find({ name: { $regex: req.body.value, $options: "i" } })
+    .limit(10)
     .then((data) => res.json({ status: true, data }))
-    .catch((err) => res.json({ status: false }));
+    .catch((err) => res.json({ status: false, data: [] }));
 };
