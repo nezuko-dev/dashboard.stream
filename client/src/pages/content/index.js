@@ -286,7 +286,7 @@ const Content = () => {
                 }
               : null)}
           >
-            <Input placeholder="Нэр" size="large" />
+            <Input placeholder="Нэр" size="large" autoFocus={true} />
           </Form.Item>
           {edit === null ? (
             <Form.Item

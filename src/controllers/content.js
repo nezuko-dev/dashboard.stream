@@ -7,7 +7,10 @@ const path = require("path");
 const fs = require("fs-extra");
 const sharp = require("sharp");
 const uploadPath = path.join(__dirname, `${process.env.UPLOAD_PATH}/raw/`);
-const imagePath = path.join(__dirname, `${process.env.UPLOAD_PATH}/images/`);
+const imagePath = path.join(
+  __dirname,
+  `${process.env.UPLOAD_PATH}/images/content/`
+);
 fs.ensureDir(uploadPath);
 fs.ensureDir(imagePath);
 // stream and ffmpeg config
@@ -155,8 +158,8 @@ exports.add = (req, res) => {
                   {
                     status: "ready",
                     size: size + "MB",
-                    "thumbnail.sm": `/content/images/sm-${name}`,
-                    "thumbnail.original": `/content/images/original-${name}`,
+                    "thumbnail.sm": `/content/images/content/sm-${name}`,
+                    "thumbnail.original": `/content/images/content/original-${name}`,
                   }
                 ).catch((err) => console.log("Failed " + err));
               })
@@ -213,15 +216,8 @@ exports.delete = (req, res) => {
       req.user.role === "admin" ? { _id: id } : { editor: req.user.id, _id: id }
     ).then((data) => {
       const { sm, original } = data.thumbnail;
-      fs.removeSync(
-        path.join(
-          imagePath,
-          original.split("/")[original.split("/").length - 1]
-        )
-      );
-      fs.removeSync(
-        path.join(imagePath, sm.split("/")[original.split("/").length - 1])
-      );
+      fs.removeSync(path.join(imagePath, original.split("/").pop()));
+      fs.removeSync(path.join(imagePath, sm.split("/").pop()));
       Content.deleteOne({ _id: id }, (err) => {
         if (err) return res.json({ status: false });
         else {
@@ -262,7 +258,7 @@ exports.image = (req, res) => {
           .resize(341, 192)
           .toFile(path.join(imagePath, `sm-${name}`));
         // do not store junks
-        Content.findOone(
+        Content.findOne(
           req.user.role === "admin"
             ? { _id: id }
             : { editor: req.user.id, _id: id }
@@ -270,22 +266,12 @@ exports.image = (req, res) => {
           .select("thumbnail")
           .then((data) => {
             const { sm, original } = data.thumbnail;
-            fs.removeSync(
-              path.join(
-                imagePath,
-                original.split("/")[original.split("/").length - 1]
-              )
-            );
-            fs.removeSync(
-              path.join(
-                imagePath,
-                sm.split("/")[original.split("/").length - 1]
-              )
-            );
+            fs.removeSync(path.join(imagePath, original.split("/").pop()));
+            fs.removeSync(path.join(imagePath, sm.split("/").pop()));
             fs.removeSync(image);
 
-            data.thumbnail.sm = `/content/images/sm-${name}`;
-            data.thumbnail.original = `/content/images/original-${name}`;
+            data.thumbnail.sm = `/content/images/content/sm-${name}`;
+            data.thumbnail.original = `/content/images/content/original-${name}`;
             data.save(() => res.json({ status: true, filename: name }));
           })
           .catch((err) => res.json({ status: false }));
@@ -305,4 +291,9 @@ exports.update = (req, res) => {
       { name }
     ).then(() => res.json({ status: true }));
   }
+};
+exports.search = (req, res) => {
+  Content.find({ name: /op/i })
+    .then((data) => res.json({ status: true, data }))
+    .catch((err) => res.json({ status: false }));
 };

@@ -1,0 +1,23 @@
+.titles {
+}
+.title-form {
+  .custom-number-input {
+    width: 100%;
+    border-radius: 8px;
+    .ant-input-number-handler-wrap {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+  }
+  .custom-select {
+    .ant-select-selector {
+      border-radius: 8px !important;
+    }
+  }
+  .policy {
+    display: flex;
+    span {
+      margin-right: 8px;
+    }
+  }
+}
