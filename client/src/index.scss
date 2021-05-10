@@ -135,6 +135,9 @@ a:visited {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  h5 {
+    margin: 0;
+  }
   .page-title {
     color: #202124;
     font-weight: 500;

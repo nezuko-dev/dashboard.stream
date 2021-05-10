@@ -11,6 +11,5 @@ const validator = require("../middleware/validator");
 router.get("/", role("admin"), franchise.index);
 router.post("/", role("admin"), validator.franchise, franchise.add);
 router.post("/:id", role("admin"), validator.franchise, franchise.update);
-router.get("/title/:id", role("admin"), franchise.titles);
 router.delete("/:id", role("admin"), franchise.delete);
 module.exports = router;

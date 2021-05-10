@@ -97,4 +97,20 @@ exports.title = [
   check("name")
     .isLength({ min: 2, max: 64 })
     .withMessage("2 - 64 тэмдэгтийн хооронд оруулна уу."),
+  check("label")
+    .isLength({ min: 2, max: 64 })
+    .withMessage("2 - 64 тэмдэгтийн хооронд оруулна уу."),
+  check("status").isIn(["ongoing", "finished"]).withMessage("Алдаатай утга"),
+  check("total_episode")
+    .isFloat({ min: 1 })
+    .withMessage("Доод тал нь 1 ангитай байна."),
+  check("plot").isLength({ min: 2 }).withMessage("Өрнөл оруулна уу."),
+  check("cover"),
+  check("poster"),
+  check("banner"),
+  check("price")
+    .optional({ nullable: true })
+    .isFloat({ min: 1 })
+    .withMessage("Алдаатай үнийн дүн"),
+  check("episodes").isArray().withMessage("Доод тал нь 1 анги оруулна уу."),
 ];

@@ -15,6 +15,7 @@ import {
   InputNumber,
   Select,
   Switch,
+  Popconfirm,
 } from "antd";
 import {
   UploadOutlined,
@@ -28,8 +29,10 @@ const Title = (props) => {
   const { Title } = Typography;
   const { Option } = Select;
   const { TextArea } = Input;
+
   const { id } = props.match.params;
   const insert = props.location.search === "?new" ? true : false;
+  const [franchise, setFranchise] = useState(null);
   const [state, setState] = useState(null);
   const [drawer, OpenDrawer] = useState(insert || false);
   const [loading, setLoading] = useState(false);
@@ -38,27 +41,26 @@ const Title = (props) => {
   const [edit, setEdit] = useState(null);
   const [paid, setPaid] = useState(false);
   const [contents, setContents] = useState([]);
-  const load = (status) => {
-    setState(null);
-    if (id) {
-      axios
-        .get("/api/franchise/title/" + id)
-        .then((response) => {
-          if (response.data.status) setState(response.data.data);
-        })
-        .catch((err) => message.error("Хүсэлт амжилтүй"));
-    } else {
-      axios
-        .get("/api/titles", { params: { franchise: status || false } })
-        .then((response) => {
-          if (response.data.status) setState(response.data.data);
-        })
-        .catch((err) => message.error("Хүсэлт амжилтүй"));
+  const setFileValue = (info, field) => {
+    if (info.file.status === "done") {
+      form.setFieldsValue({
+        [field]: info.file.response.filename,
+      });
     }
   };
-  useEffect(() => {
-    if (!insert) load();
-  }, [insert]);
+  const load = () => {
+    setState(null);
+    axios
+      .get("/api/titles", { params: id && { franchise: id } })
+      .then((response) => {
+        if (response.data.status) {
+          setState(response.data.data);
+          if (id) setFranchise(response.data.franchise);
+        }
+      })
+      .catch((err) => message.error("Хүсэлт амжилтүй"));
+  };
+  useEffect(() => load(), []);
   const Add = () => (
     <Button
       type="primary"
@@ -73,23 +75,36 @@ const Title = (props) => {
   return (
     <>
       <div className="titles">
-        <Card
-          tabBarExtraContent={<Add />}
-          onTabChange={(key) => load(key)}
-          activeTabKey={id ? "true" : "false"}
-          tabList={[
-            {
-              key: false,
-              tab: "Бүлэглээгүй",
-            },
-
-            {
-              key: true,
-              tab: "Бүлэглэсэн",
-            },
-          ]}
-        >
-          {state?.length}
+        <Card>
+          <>
+            <div className="title-container">
+              <Title level={5}>
+                {id && franchise ? `Бүлэг: ${franchise.name}` : "Бүх үзвэрүүд"}
+              </Title>
+              <Add />
+            </div>
+            <Divider style={{ marginTop: 0 }} />
+          </>
+          {state ? (
+            <Row gutter={16}>
+              {state.map((title) => (
+                <Col xs={24} md={12} xl={6} xxl={5} key={title._id}>
+                  <Card
+                    size="small"
+                    title={title.name}
+                    hoverable
+                    onClick={() => setEdit(title)}
+                  >
+                    <p>
+                      Нийт анги: {title.episodes.length}/{title.total_episode}
+                    </p>
+                    <p></p>
+                    <p></p>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          ) : null}
         </Card>
       </div>
       <Drawer
@@ -129,7 +144,7 @@ const Title = (props) => {
             setLoading(true);
             axios
               .post(`/api/titles${edit ? `/${edit._id}` : ""}`, {
-                name: values.name,
+                ...values,
                 franchise: id || null,
               })
               .then((response) => {
@@ -274,7 +289,6 @@ const Title = (props) => {
                 message: "cover зураг байршуулна уу!",
               },
             ]}
-            valuePropName="file"
             {...(errors && errors.find((error) => error.param === "cover")
               ? {
                   help: errors.find((error) => error.param === "cover").msg,
@@ -287,6 +301,7 @@ const Title = (props) => {
                 action={`/api/titles/image/cover`}
                 maxCount={1}
                 accept="image/*"
+                onChange={(info) => setFileValue(info, "cover")}
               >
                 <Button icon={<UploadOutlined />}>
                   Cover зураг байршуулах (1920×1080)
@@ -302,7 +317,6 @@ const Title = (props) => {
                 message: "poster зураг байршуулна уу!",
               },
             ]}
-            valuePropName="file"
             {...(errors && errors.find((error) => error.param === "poster")
               ? {
                   help: errors.find((error) => error.param === "poster").msg,
@@ -315,6 +329,7 @@ const Title = (props) => {
                 action={`/api/titles/image/poster`}
                 maxCount={1}
                 accept="image/*"
+                onChange={(info) => setFileValue(info, "poster")}
               >
                 <Button icon={<UploadOutlined />}>
                   Poster зураг байршуулах (960×1440)
@@ -330,7 +345,6 @@ const Title = (props) => {
                 message: "Banner зураг байршуулна уу!",
               },
             ]}
-            valuePropName="file"
             {...(errors && errors.find((error) => error.param === "banner")
               ? {
                   help: errors.find((error) => error.param === "banner").msg,
@@ -343,6 +357,7 @@ const Title = (props) => {
                 action={`/api/titles/image/banner`}
                 maxCount={1}
                 accept="image/*"
+                onChange={(info) => setFileValue(info, "banner")}
               >
                 <Button icon={<UploadOutlined />}>
                   Banner зураг байршуулах (1920×720)
@@ -352,12 +367,11 @@ const Title = (props) => {
           </Form.Item>
           <Divider dashed />
           <Title level={5}>Tөлбөрийн мэдээлэл</Title>
-          <Form.Item name="policy">
-            <div className="policy">
-              <span>Tөлбөртэй контент</span>
-              <Switch onChange={(e) => setPaid(e)} />
-            </div>
-          </Form.Item>
+          <div className="policy">
+            <span>Tөлбөртэй контент</span>
+            <Switch onChange={(e) => setPaid(e)} />
+          </div>
+
           {paid ? (
             <Form.Item
               name="price"
@@ -402,76 +416,83 @@ const Title = (props) => {
             {(fields, { add, remove }, { errors }) => (
               <>
                 {fields.map((field, index) => (
-                  <Form.Item required={false} key={field.key}>
-                    <Row gutter={16}>
-                      {
-                        <>
-                          <Col span={11}>
-                            <Form.Item
-                              name="name"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Ангийн нэр оруулна уу.",
-                                },
-                              ]}
-                            >
-                              <Input placeholder="Нэр" size="large" />
-                            </Form.Item>
-                          </Col>
-                          <Col span={11}>
-                            <Form.Item
-                              name="content"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Контент сонгоно уу.",
-                                },
-                              ]}
-                            >
-                              <Select
-                                showSearch
-                                filterOption={false}
-                                notFoundContent={null}
-                                defaultActiveFirstOption={false}
-                                showArrow={false}
-                                placeholder="Контент хайх"
-                                onSearch={(value) => {
-                                  if (value) {
-                                    axios
-                                      .post("/api/content/search", {
-                                        value: value,
-                                      })
-                                      .then((response) => {
-                                        if (response.data.status)
-                                          setContents(response.data.data);
-                                        else setContents([]);
-                                      });
-                                  } else setContents([]);
-                                }}
-                                size="large"
-                                className="custom-select"
-                              >
-                                {contents.map((content) => (
-                                  <Option value={content._id} key={content._id}>
-                                    {content.name}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                        </>
-                      }
-                      {fields.length > 1 ? (
-                        <Col span={2}>
-                          <MinusCircleOutlined
-                            className="dynamic-delete-button"
-                            onClick={() => remove(field.name)}
-                          />
+                  <Row gutter={16} key={field.key}>
+                    {
+                      <>
+                        <Col span={11}>
+                          <Form.Item
+                            {...field}
+                            name={[field.name, "name"]}
+                            fieldKey={[field.fieldKey, "name"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Ангийн нэр оруулна уу.",
+                              },
+                            ]}
+                          >
+                            <Input placeholder="Нэр" size="large" />
+                          </Form.Item>
                         </Col>
-                      ) : null}
-                    </Row>
-                  </Form.Item>
+                        <Col span={11}>
+                          <Form.Item
+                            {...field}
+                            name={[field.name, "content"]}
+                            fieldKey={[field.fieldKey, "content"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Контент сонгоно уу.",
+                              },
+                            ]}
+                          >
+                            <Select
+                              showSearch
+                              filterOption={false}
+                              notFoundContent={null}
+                              defaultActiveFirstOption={false}
+                              showArrow={false}
+                              placeholder="Контент хайх"
+                              onSearch={(value) => {
+                                if (value) {
+                                  axios
+                                    .post("/api/content/search", {
+                                      value: value,
+                                    })
+                                    .then((response) => {
+                                      if (response.data.status)
+                                        setContents(response.data.data);
+                                      else setContents([]);
+                                    });
+                                } else setContents([]);
+                              }}
+                              size="large"
+                              className="custom-select"
+                            >
+                              {contents.map((content) => (
+                                <Option value={content._id} key={content._id}>
+                                  {content.name}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                      </>
+                    }
+                    {fields.length > 1 && index !== 0 ? (
+                      <Col span={2}>
+                        <Popconfirm
+                          placement="left"
+                          title="Энэ ангийг устгах уу?"
+                          onConfirm={() => remove(field.name)}
+                          okText="Tийм"
+                          cancelText="Болих"
+                        >
+                          <MinusCircleOutlined className="dynamic-delete-button" />
+                        </Popconfirm>
+                      </Col>
+                    ) : null}
+                  </Row>
                 ))}
                 <Form.Item>
                   <Button

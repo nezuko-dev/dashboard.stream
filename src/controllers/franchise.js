@@ -30,16 +30,6 @@ exports.add = (req, res) => {
     );
   }
 };
-
-exports.titles = async (req, res) => {
-  const { id } = req.params;
-  if (ObjectId.isValid(id)) {
-    return res.json({
-      status: true,
-      data: await Title.find({ franchise: id }),
-    });
-  }
-};
 exports.delete = (req, res) => {
   const { id } = req.params;
   if (ObjectId.isValid(id)) {
