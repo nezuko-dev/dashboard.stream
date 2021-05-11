@@ -16,11 +16,14 @@ import {
   Select,
   Switch,
   Popconfirm,
+  Modal,
+  Empty,
 } from "antd";
 import {
   UploadOutlined,
   PlusOutlined,
   MinusCircleOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import axios from "axios";
@@ -59,7 +62,30 @@ const Title = (props) => {
         }
       })
       .catch((err) => message.error("Хүсэлт амжилтүй"));
+    // fetch contents
+    axios
+      .get("/api/content", { params: { status: "ready" } })
+      .then((response) => {
+        if (response.data.status) setContents(response.data.data);
+      })
+      .catch((err) => message.error("Хүсэлт амжилтүй"));
   };
+  useEffect(() => {
+    if (!edit) {
+      form.resetFields();
+    }
+    if (edit) {
+      form.setFieldsValue({
+        ...edit,
+        cover: edit.images.cover.original,
+        poster: edit.images.poster.original,
+        banner: edit.images.banner,
+      });
+      setPaid(Boolean(edit.price));
+    }
+  }, [form, edit]);
+
+  // eslint-disable-next-line
   useEffect(() => load(), []);
   const Add = () => (
     <Button
@@ -67,6 +93,7 @@ const Title = (props) => {
       className="button-content"
       onClick={() => {
         OpenDrawer(true);
+        setEdit(null);
       }}
     >
       Нэмэх
@@ -86,41 +113,86 @@ const Title = (props) => {
             <Divider style={{ marginTop: 0 }} />
           </>
           {state ? (
-            <Row gutter={16}>
-              {state.map((title) => (
-                <Col xs={24} md={12} xl={6} xxl={5} key={title._id}>
-                  <Card
-                    size="small"
-                    title={title.name}
-                    hoverable
-                    onClick={() => setEdit(title)}
-                  >
-                    <p>
-                      Нийт анги: {title.episodes.length}/{title.total_episode}
-                    </p>
-                    <p></p>
-                    <p></p>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+            state.length === 0 ? (
+              <Empty />
+            ) : (
+              <Row gutter={[16, 16]}>
+                {state.map((title) => (
+                  <Col xs={24} md={12} xl={6} xxl={5} key={title._id}>
+                    <Card
+                      size="small"
+                      title={title.name}
+                      hoverable
+                      onClick={() => {
+                        setEdit(title);
+                        OpenDrawer(true);
+                      }}
+                    >
+                      <p>
+                        Нийт анги: {title.episodes.length}/{title.total_episode}
+                      </p>
+                      <p></p>
+                      <p></p>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            )
           ) : null}
         </Card>
       </div>
       <Drawer
-        title="Шинэ үзвэр нэмэх"
+        forceRender
+        title={edit ? "Үзвэр засах" : "Шинэ үзвэр нэмэх"}
         width={720}
-        onClose={() => OpenDrawer(false)}
+        onClose={() => {
+          OpenDrawer(false);
+          setEdit(null);
+        }}
         visible={drawer}
         footer={
-          <div style={{ textAlign: "right" }}>
-            <Space>
-              <Button onClick={() => OpenDrawer(false)}>Буцах</Button>
-              <Button onClick={() => form.submit()} type="primary">
-                Хадгалах
+          <Row justify="space-between">
+            {edit ? (
+              <Button
+                type="primary"
+                onClick={() =>
+                  Modal.confirm({
+                    title: "Анхааруулга",
+                    icon: <ExclamationCircleOutlined />,
+                    content: `Энэ үзвэрийг устахдаа итгэлтэй байна уу`,
+                    okText: "Tийм",
+                    cancelText: "Буцах",
+                    onOk: () => {
+                      axios
+                        .delete("/api/titles/" + edit._id)
+                        .then((response) => {
+                          if (response.data.status) {
+                            message.success("Амжилттай устгагдлаа.");
+                            OpenDrawer(false);
+                            setEdit(null);
+                            load();
+                          }
+                        })
+                        .catch((err) => message.error("Хүсэлт амжилтгүй"));
+                    },
+                  })
+                }
+                danger
+              >
+                Устгах
               </Button>
-            </Space>
-          </div>
+            ) : (
+              <div></div>
+            )}
+            <div style={{ textAlign: "right" }}>
+              <Space>
+                <Button onClick={() => OpenDrawer(false)}>Буцах</Button>
+                <Button onClick={() => form.submit()} type="primary">
+                  Хадгалах
+                </Button>
+              </Space>
+            </div>
+          </Row>
         }
         {...(loading || insert
           ? {
@@ -137,7 +209,6 @@ const Title = (props) => {
           form={form}
           layout="vertical"
           className="custom-form title-form"
-          initialValues={edit}
           hideRequiredMark
           onFinish={(values) => {
             setError(null);
@@ -230,7 +301,7 @@ const Title = (props) => {
                   : null)}
               >
                 <Select className="custom-select" size="large">
-                  <Option value="ongoing">Гарж байгаа</Option>
+                  <Option value="ongoing">Гарч байгаа</Option>
                   <Option value="finished">Дууссан</Option>
                 </Select>
               </Form.Item>
@@ -304,7 +375,7 @@ const Title = (props) => {
                 onChange={(info) => setFileValue(info, "cover")}
               >
                 <Button icon={<UploadOutlined />}>
-                  Cover зураг байршуулах (1920×1080)
+                  Cover зураг {edit ? "солих" : "байршуулах"} (1920×1080)
                 </Button>
               </Upload>
             </ImgCrop>
@@ -332,7 +403,7 @@ const Title = (props) => {
                 onChange={(info) => setFileValue(info, "poster")}
               >
                 <Button icon={<UploadOutlined />}>
-                  Poster зураг байршуулах (960×1440)
+                  Poster зураг {edit ? "солих" : "байршуулах"} (960×1440)
                 </Button>
               </Upload>
             </ImgCrop>
@@ -360,7 +431,7 @@ const Title = (props) => {
                 onChange={(info) => setFileValue(info, "banner")}
               >
                 <Button icon={<UploadOutlined />}>
-                  Banner зураг байршуулах (1920×720)
+                  Banner зураг {edit ? "солих" : "байршуулах"} (1920×720)
                 </Button>
               </Upload>
             </ImgCrop>
@@ -369,7 +440,7 @@ const Title = (props) => {
           <Title level={5}>Tөлбөрийн мэдээлэл</Title>
           <div className="policy">
             <span>Tөлбөртэй контент</span>
-            <Switch onChange={(e) => setPaid(e)} />
+            <Switch checked={paid} onChange={(e) => setPaid(e)} />
           </div>
 
           {paid ? (

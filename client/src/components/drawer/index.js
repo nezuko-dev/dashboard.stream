@@ -63,16 +63,16 @@ const Drawer = () => {
           icon: <CloudUploadOutlined />,
         },
         {
-          to: "/titles",
-          title: "Үзвэрүүд",
-          role: ["admin"],
-          icon: <PlaySquareOutlined />,
-        },
-        {
           to: "/franchise",
           title: "Бүлэг",
           role: ["admin"],
           icon: <OrderedListOutlined />,
+        },
+        {
+          to: "/titles",
+          title: "Үзвэрүүд",
+          role: ["admin"],
+          icon: <PlaySquareOutlined />,
         },
         {
           to: "/invoice",

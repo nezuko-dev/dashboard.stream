@@ -35,12 +35,14 @@ exports.delete = (req, res) => {
   if (ObjectId.isValid(id)) {
     /* 
      todo :
-     delete all titles
-     Title.deleteMany({franchise:id});
+     delete all title images using fs
      */
-    Franchise.deleteOne({ _id: id }, (err) => {
+    Franchise.deleteOne({ _id: id }, async (err) => {
+      await Title.deleteMany({ franchise: id });
       if (err) return res.json({ status: false });
-      else return res.json({ status: true });
+      else {
+        return res.json({ status: true });
+      }
     });
   } else return res.status(400).json({ status: false });
 };

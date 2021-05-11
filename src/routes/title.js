@@ -17,5 +17,6 @@ router.post(
   role("admin"),
   title.image
 );
-
+router.post("/:id", role("admin"), validator.title, title.update);
+router.delete("/:id", role("admin"), title.delete);
 module.exports = router;

@@ -13,6 +13,8 @@ import {
   Select,
   Popover,
   Space,
+  Row,
+  Col,
 } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -112,8 +114,8 @@ const Franchise = () => {
               Modal.confirm({
                 title: "Анхааруулга",
                 icon: <ExclamationCircleOutlined />,
-                content: "Та устгахдаа итгэлтэй байна уу?",
-                okText: "Tийм",
+                content: `Энэ бүлгийн ${record.titles.length} үзвэрийн мэдээлэл давхар устахыг анхаарна уу.`,
+                okText: "Устгах",
                 cancelText: "Буцах",
                 onOk: () => {
                   axios
@@ -273,56 +275,59 @@ const Franchise = () => {
           >
             <Input placeholder="Нэр" size="large" />
           </Form.Item>
-          <Form.Item>
-            <Form.Item
-              className="franchise-formitem"
-              name="age_rating"
-              label="Насны зэрэглэл"
-              rules={[
-                {
-                  required: true,
-                  message: "Насны зэрэглэл оруулна уу!",
-                },
-              ]}
-              {...(errors &&
-              errors.find((error) => error.param === "age_rating")
-                ? {
-                    help: errors.find((error) => error.param === "age_rating")
-                      .msg,
-                    validateStatus: "error",
-                  }
-                : null)}
-            >
-              <InputNumber
-                min={0}
-                max={180}
-                placeholder="Насны зэрэглэл"
-                size="large"
-              />
-            </Form.Item>
-            <Form.Item
-              className="franchise-formitem"
-              name="type"
-              label="Tөрөл"
-              rules={[
-                {
-                  required: true,
-                  message: "Tөрөл сонгоно уу!",
-                },
-              ]}
-              {...(errors && errors.find((error) => error.param === "type")
-                ? {
-                    help: errors.find((error) => error.param === "type").msg,
-                    validateStatus: "error",
-                  }
-                : null)}
-            >
-              <Select size="large">
-                <Option value="movie">Кино</Option>
-                <Option value="series">Цуврал</Option>
-              </Select>
-            </Form.Item>
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="age_rating"
+                label="Насны зэрэглэл"
+                rules={[
+                  {
+                    required: true,
+                    message: "Насны зэрэглэл оруулна уу!",
+                  },
+                ]}
+                {...(errors &&
+                errors.find((error) => error.param === "age_rating")
+                  ? {
+                      help: errors.find((error) => error.param === "age_rating")
+                        .msg,
+                      validateStatus: "error",
+                    }
+                  : null)}
+              >
+                <InputNumber
+                  min={0}
+                  max={180}
+                  placeholder="Насны зэрэглэл"
+                  className="custom-number-input"
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="type"
+                label="Tөрөл"
+                rules={[
+                  {
+                    required: true,
+                    message: "Tөрөл сонгоно уу!",
+                  },
+                ]}
+                {...(errors && errors.find((error) => error.param === "type")
+                  ? {
+                      help: errors.find((error) => error.param === "type").msg,
+                      validateStatus: "error",
+                    }
+                  : null)}
+              >
+                <Select className="custom-select" size="large">
+                  <Option value="movie">Кино</Option>
+                  <Option value="series">Цуврал</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item
             name="genre"
             label="Ангилал"
@@ -341,6 +346,7 @@ const Franchise = () => {
           >
             <Select
               mode="multiple"
+              className="custom-select"
               allowClear
               placeholder="Ангилалууд сонгоно уу."
               loading={genre ? false : true}

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const titleSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, default: 0 },
+  label: { type: String, required: true },
   plot: { type: String, default: null },
   franchise: {
     type: mongoose.Schema.ObjectId,
