@@ -89,7 +89,7 @@ const Franchise = () => {
       render: (text, record) => (
         <Button type={text.length === 0 ? "primary" : "secondary"}>
           <Link to={`/titles/${record._id}${text.length === 0 ? "?new" : ""}`}>
-            {text.length || "Нэмэх"}
+            {text.length ? "Үзэх" : "Нэмэх"}
           </Link>
         </Button>
       ),

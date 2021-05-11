@@ -116,23 +116,23 @@ const Title = (props) => {
             state.length === 0 ? (
               <Empty />
             ) : (
-              <Row gutter={[16, 16]}>
+              <Row gutter={[16, 16]} className="titles">
                 {state.map((title) => (
-                  <Col xs={24} md={12} xl={6} xxl={5} key={title._id}>
+                  <Col xs={12} md={8} xl={5} xxl={5} key={title._id}>
                     <Card
                       size="small"
                       title={title.name}
+                      className="title-card"
                       hoverable
                       onClick={() => {
                         setEdit(title);
                         OpenDrawer(true);
                       }}
                     >
-                      <p>
-                        Нийт анги: {title.episodes.length}/{title.total_episode}
-                      </p>
-                      <p></p>
-                      <p></p>
+                      <img
+                        src={title.images.poster.md}
+                        alt={`${title.name}'s poster`}
+                      />
                     </Card>
                   </Col>
                 ))}

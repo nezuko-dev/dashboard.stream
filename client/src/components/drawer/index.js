@@ -124,13 +124,15 @@ const Drawer = () => {
       ],
     },
   ];
-
   return token ? (
     <Col md={6} lg={6} xl={5} xxl={4} className="main-menu">
       <Affix>
         {user ? (
           <div className="main-menu-inner">
-            <Menu selectedKeys={location.pathname} mode="inline">
+            <Menu
+              selectedKeys={`/${location.pathname.split("/")[1]}`}
+              mode="inline"
+            >
               {routes.map((route, index) => (
                 <Menu.ItemGroup key={index} title={route.title}>
                   {route.items

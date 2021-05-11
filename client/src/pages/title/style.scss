@@ -1,4 +1,14 @@
 .titles {
+  .title-card {
+    .ant-card-body {
+      padding: 0;
+      img {
+        width: 100%;
+        border-bottom-right-radius: 15px;
+        border-bottom-left-radius: 15px;
+      }
+    }
+  }
 }
 .title-form {
   .policy {
