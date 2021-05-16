@@ -35,7 +35,6 @@ exports.add = (req, res) => {
     plot,
     cover,
     poster,
-    banner,
     price,
     episodes,
     franchise,
@@ -63,7 +62,6 @@ exports.add = (req, res) => {
         sm: "/content/images/titles/sm-" + poster,
         original: "/content/images/titles/" + poster,
       },
-      "images.banner": "/content/images/titles/" + banner,
     })
       .then(() => res.json({ status: true }))
       .catch((err) => {
@@ -101,11 +99,6 @@ exports.image = (req, res) => {
           await sharp(image)
             .resize(341, 192)
             .toFile(path.join(imagePath, `sm-${name}`));
-        } else if (type == "banner") {
-          // 1920 × 720 > on home screen
-          await sharp(image)
-            .resize(1920, 1440)
-            .toFile(path.join(imagePath, name));
         } else if (type == "poster") {
           // original 960 × 1440 , md 480 × 720 , sm 160 × 240 display > on mobile
           await sharp(image)
@@ -135,7 +128,6 @@ exports.update = (req, res) => {
     plot,
     cover,
     poster,
-    banner,
     price,
     episodes,
   } = req.body;
@@ -153,7 +145,6 @@ exports.update = (req, res) => {
         plot,
         cover,
         poster,
-        banner,
         price: price || 0,
         episodes,
       }

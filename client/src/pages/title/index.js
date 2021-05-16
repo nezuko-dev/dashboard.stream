@@ -79,7 +79,6 @@ const Title = (props) => {
         ...edit,
         cover: edit.images.cover.original,
         poster: edit.images.poster.original,
-        banner: edit.images.banner,
       });
       setPaid(Boolean(edit.price));
     }
@@ -404,34 +403,6 @@ const Title = (props) => {
               >
                 <Button icon={<UploadOutlined />}>
                   Poster зураг {edit ? "солих" : "байршуулах"} (960×1440)
-                </Button>
-              </Upload>
-            </ImgCrop>
-          </Form.Item>
-          <Form.Item
-            name="banner"
-            rules={[
-              {
-                required: true,
-                message: "Banner зураг байршуулна уу!",
-              },
-            ]}
-            {...(errors && errors.find((error) => error.param === "banner")
-              ? {
-                  help: errors.find((error) => error.param === "banner").msg,
-                  validateStatus: "error",
-                }
-              : null)}
-          >
-            <ImgCrop aspect={16 / 9}>
-              <Upload
-                action={`/api/titles/image/banner`}
-                maxCount={1}
-                accept="image/*"
-                onChange={(info) => setFileValue(info, "banner")}
-              >
-                <Button icon={<UploadOutlined />}>
-                  Banner зураг {edit ? "солих" : "байршуулах"} (1920×720)
                 </Button>
               </Upload>
             </ImgCrop>

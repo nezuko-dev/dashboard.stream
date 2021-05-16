@@ -20,7 +20,6 @@ const titleSchema = new mongoose.Schema({
       sm: { type: String, required: true },
       original: { type: String, required: true },
     },
-    banner: { type: String, default: null },
   },
   episodes: [
     {

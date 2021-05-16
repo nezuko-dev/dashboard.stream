@@ -107,7 +107,6 @@ exports.title = [
   check("plot").isLength({ min: 2 }).withMessage("Өрнөл оруулна уу."),
   check("cover"),
   check("poster"),
-  check("banner"),
   check("price")
     .optional({ nullable: true })
     .isFloat({ min: 1 })
