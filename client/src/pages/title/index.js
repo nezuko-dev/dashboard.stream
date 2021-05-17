@@ -79,8 +79,10 @@ const Title = (props) => {
         ...edit,
         cover: edit.images.cover.original,
         poster: edit.images.poster.original,
+        amount: edit.price.amount,
+        duration: edit.price.duration,
       });
-      setPaid(Boolean(edit.price));
+      setPaid(Boolean(edit.price.amount));
     }
   }, [form, edit]);
 
@@ -413,31 +415,62 @@ const Title = (props) => {
             <span>Tөлбөртэй контент</span>
             <Switch checked={paid} onChange={(e) => setPaid(e)} />
           </div>
-
           {paid ? (
-            <Form.Item
-              name="price"
-              label="Үнэ"
-              rules={[
-                {
-                  required: true,
-                  message: "Үнэ оруулна уу.",
-                },
-              ]}
-              {...(errors && errors.find((error) => error.param === "price")
-                ? {
-                    help: errors.find((error) => error.param === "price").msg,
-                    validateStatus: "error",
-                  }
-                : null)}
-            >
-              <InputNumber
-                min={1}
-                className="custom-number-input"
-                placeholder="Үнэ"
-                size="large"
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="amount"
+                  label="Үнэ"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Үнэ оруулна уу.",
+                    },
+                  ]}
+                  {...(errors && errors.find((error) => error.param === "price")
+                    ? {
+                        help: errors.find((error) => error.param === "price")
+                          .msg,
+                        validateStatus: "error",
+                      }
+                    : null)}
+                >
+                  <InputNumber
+                    min={1}
+                    className="custom-number-input"
+                    placeholder="Үнэ"
+                    size="large"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="duration"
+                  label="Tүрээсийн хугацаа(цагаар)"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Tүрээсийн хугацааг оруулна уу.",
+                    },
+                  ]}
+                  {...(errors &&
+                  errors.find((error) => error.param === "duration")
+                    ? {
+                        help: errors.find((error) => error.param === "duration")
+                          .msg,
+                        validateStatus: "error",
+                      }
+                    : null)}
+                >
+                  <InputNumber
+                    min={12}
+                    className="custom-number-input"
+                    placeholder="Tүрээсийн хугацаа(цагаар)"
+                    size="large"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
           ) : null}
           <Divider dashed />
           <Title level={5}>Ангиуд</Title>

@@ -35,7 +35,8 @@ exports.add = (req, res) => {
     plot,
     cover,
     poster,
-    price,
+    amount,
+    duration,
     episodes,
     franchise,
   } = req.body;
@@ -49,7 +50,7 @@ exports.add = (req, res) => {
       status,
       total_episode,
       plot,
-      price,
+      price: { amount: amount || 0, duration: duration || 0 },
       episodes,
       franchise,
       "images.cover": {
@@ -128,7 +129,8 @@ exports.update = (req, res) => {
     plot,
     cover,
     poster,
-    price,
+    amount,
+    duration,
     episodes,
   } = req.body;
   const errors = validationResult(req);
@@ -145,7 +147,7 @@ exports.update = (req, res) => {
         plot,
         cover,
         poster,
-        price: price || 0,
+        price: { amount: amount || 0, duration: duration || 0 },
         episodes,
       }
     )

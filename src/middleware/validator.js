@@ -107,9 +107,13 @@ exports.title = [
   check("plot").isLength({ min: 2 }).withMessage("Өрнөл оруулна уу."),
   check("cover"),
   check("poster"),
-  check("price")
+  check("amount")
     .optional({ nullable: true })
     .isFloat({ min: 1 })
     .withMessage("Алдаатай үнийн дүн"),
+  check("duration")
+    .optional({ nullable: true })
+    .isFloat({ min: 12 })
+    .withMessage("Алдаатай хугацаа"),
   check("episodes").isArray().withMessage("Доод тал нь 1 анги оруулна уу."),
 ];

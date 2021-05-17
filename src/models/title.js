@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const titleSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  price: { type: Number, default: 0 },
+  price: {
+    amount: { type: Number, default: 0 },
+    duration: { type: Number, default: 0 },
+  },
   label: { type: String, required: true },
   plot: { type: String, default: null },
   franchise: {
@@ -27,7 +30,6 @@ const titleSchema = new mongoose.Schema({
       content: { type: mongoose.Schema.ObjectId, ref: "content" },
     },
   ],
-
   total_episode: { type: Number, default: null },
   created: { type: Date, default: Date.now },
   status: { type: String, required: true },
