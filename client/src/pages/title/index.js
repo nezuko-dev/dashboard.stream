@@ -473,7 +473,7 @@ const Title = (props) => {
                               },
                             ]}
                           >
-                            <Input placeholder="Нэр" size="large" />
+                            <Input placeholder="Tовч агуулга" size="large" />
                           </Form.Item>
                         </Col>
                         <Col span={11}>
