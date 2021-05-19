@@ -27,6 +27,7 @@ const titleSchema = new mongoose.Schema({
   episodes: [
     {
       name: { type: String, required: true },
+      plot: { type: String, default: null },
       content: { type: mongoose.Schema.ObjectId, ref: "content" },
     },
   ],

@@ -494,63 +494,88 @@ const Title = (props) => {
                   <Row gutter={16} key={field.key}>
                     {
                       <>
-                        <Col span={11}>
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "name"]}
-                            fieldKey={[field.fieldKey, "name"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Ангийн нэр оруулна уу.",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Tовч агуулга" size="large" />
-                          </Form.Item>
-                        </Col>
-                        <Col span={11}>
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "content"]}
-                            fieldKey={[field.fieldKey, "content"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Контент сонгоно уу.",
-                              },
-                            ]}
-                          >
-                            <Select
-                              showSearch
-                              filterOption={false}
-                              notFoundContent={null}
-                              defaultActiveFirstOption={false}
-                              showArrow={false}
-                              placeholder="Контент хайх"
-                              onSearch={(value) => {
-                                if (value) {
-                                  axios
-                                    .post("/api/content/search", {
-                                      value: value,
-                                    })
-                                    .then((response) => {
-                                      if (response.data.status)
-                                        setContents(response.data.data);
-                                      else setContents([]);
-                                    });
-                                } else setContents([]);
-                              }}
-                              size="large"
-                              className="custom-select"
-                            >
-                              {contents.map((content) => (
-                                <Option value={content._id} key={content._id}>
-                                  {content.name}
-                                </Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
+                        <Col span={index === 0 ? 24 : 22}>
+                          <Row gutter={16}>
+                            <Col span={12}>
+                              <Form.Item
+                                {...field}
+                                name={[field.name, "name"]}
+                                fieldKey={[field.fieldKey, "name"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Ангийн нэр оруулна уу.",
+                                  },
+                                ]}
+                              >
+                                <Input placeholder="Нэр" size="large" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                              <Form.Item
+                                {...field}
+                                name={[field.name, "content"]}
+                                fieldKey={[field.fieldKey, "content"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Контент сонгоно уу.",
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  showSearch
+                                  filterOption={false}
+                                  notFoundContent={null}
+                                  defaultActiveFirstOption={false}
+                                  showArrow={false}
+                                  placeholder="Контент хайх"
+                                  onSearch={(value) => {
+                                    if (value) {
+                                      axios
+                                        .post("/api/content/search", {
+                                          value: value,
+                                        })
+                                        .then((response) => {
+                                          if (response.data.status)
+                                            setContents(response.data.data);
+                                          else setContents([]);
+                                        });
+                                    } else setContents([]);
+                                  }}
+                                  size="large"
+                                  className="custom-select"
+                                >
+                                  {contents.map((content) => (
+                                    <Option
+                                      value={content._id}
+                                      key={content._id}
+                                    >
+                                      {content.name}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                              <Form.Item
+                                {...field}
+                                name={[field.name, "plot"]}
+                                fieldKey={[field.fieldKey, "plot"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Tовч агуулга оруулна уу.",
+                                  },
+                                ]}
+                              >
+                                <Input
+                                  placeholder="Tовч агуулга"
+                                  size="large"
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
                         </Col>
                       </>
                     }

@@ -18,8 +18,10 @@
     }
   }
   .dynamic-delete-button {
-    height: 38px;
+    padding-bottom: 20px;
+    height: 100%;
     display: flex;
     align-items: center;
+    color: #ff4d4f;
   }
 }
