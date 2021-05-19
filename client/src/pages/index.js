@@ -9,6 +9,7 @@ import Genre from "./genre";
 import Admin from "./admin";
 import Franchise from "./franchise";
 import Content from "./content";
+import Users from "./users";
 
 import Title from "./title";
 export {
@@ -23,4 +24,5 @@ export {
   Franchise,
   Title,
   Content,
+  Users,
 };

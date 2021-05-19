@@ -18,6 +18,7 @@ import {
   Franchise,
   Title,
   Content,
+  Users,
 } from "pages";
 // context
 import { User } from "context/user";
@@ -97,6 +98,7 @@ const App = () => {
                   <PrivateRoute path="/titles/:id" exact component={Title} />
                   <PrivateRoute path="/titles" exact component={Title} />
                   <PrivateRoute path="/contents" exact component={Content} />
+                  <PrivateRoute path="/users" exact component={Users} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>
