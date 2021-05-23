@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Col, message, Row, Divider, Spin } from "antd";
 import { Link } from "react-router-dom";
-import moment from "moment";
+
 import {
   SmileTwoTone,
   IdcardTwoTone,
@@ -75,7 +75,7 @@ const Dashboard = () => {
         title: "Идэвхтэй түрээсүүд",
         count: 0,
         icon: <HourglassTwoTone />,
-        path: "/rents",
+        path: "/rent",
       },
     ];
     axios
@@ -94,14 +94,20 @@ const Dashboard = () => {
       .get("/api/dashboard/income")
       .then((response) => {
         if (response.data.status) {
-          // response.data.data.map((data) => {
-          //   amount.push(data.title.price.amount);
-          //   labels.push(moment(data).format("YYYY MM DD"));
-          // });
-          setIncome(response.data.data);
+          var income = {};
+          response.data.data.map((data) => {
+            const date = data.created.split("T")[0];
+            income[date] ? income[date].push(data) : (income[date] = [data]);
+            return income;
+          });
+
+          setIncome(income);
         }
       })
-      .catch((err) => message.error("Хүсэлт амжилтгүй"));
+      .catch((err) => {
+        console.log(err);
+        message.error("Хүсэлт амжилтгүй");
+      });
   }, []);
   return (
     <div className="dashboard">
@@ -136,17 +142,24 @@ const Dashboard = () => {
       {income ? (
         <Line
           data={{
-            labels: income.map((data) => {
-              return moment(data).format("YYYY MM DD");
-            }),
+            labels: Object.keys(income),
             datasets: [
               {
-                label: " Tүрээсийн дүн",
-                data: income.map((data) => {
-                  return data.title.price.amount;
+                label: "Tүрээсийн дүн",
+                data: Object.keys(income).map((key) => {
+                  let current = income[key];
+                  if (current.length > 1) {
+                    let amount = 0;
+                    current.map(
+                      (title) => (amount += title.title.price.amount)
+                    );
+                    return amount;
+                  } else {
+                    return current[0].title.price.amount;
+                  }
                 }),
                 fill: false,
-                backgroundColor: "rgb(24, 144, 255)",
+                backgroundColor: "rgb(24, 130, 144, 255)",
                 borderColor: "rgba(24, 144, 255,0.2)",
               },
             ],

@@ -117,3 +117,7 @@ exports.title = [
     .withMessage("Алдаатай хугацаа"),
   check("episodes").isArray().withMessage("Доод тал нь 1 анги оруулна уу."),
 ];
+exports.reports = [
+  check("type").isIn(["user", "title", "invoice"]).withMessage("Алдаатай утга"),
+  check("range").isArray().withMessage("Алдаатай утга"),
+];
