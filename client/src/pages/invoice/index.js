@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { message, Table, Card, Spin, Empty, Form, Input } from "antd";
+import {
+  message,
+  Table,
+  Card,
+  Spin,
+  Empty,
+  Form,
+  Input,
+  Tag,
+  Tooltip,
+} from "antd";
 import moment from "moment";
 import axios from "axios";
 
-import "./style.scss";
-const Users = () => {
+const Invoice = () => {
   const [state, setState] = useState(null);
   const [search, setSearch] = useState(null);
 
   const load = () => {
     setState(null);
     axios
-      .get("/api/users")
+      .get("/api/invoice")
       .then((response) => {
         if (response.data.status) setState(response.data.data);
       })
@@ -25,17 +34,36 @@ const Users = () => {
   };
   const columns = [
     {
-      title: "Имэйл",
-      dataIndex: "email",
+      title: "Хэрэглэгч",
+      dataIndex: "user",
+      render: (text) => text?.email,
+    },
+
+    {
+      title: "Үзвэр",
+      dataIndex: "title",
+      render: (text) => text?.name,
     },
     {
-      title: "IP",
-      dataIndex: "ip",
+      title: "Үнийн дүн",
+      dataIndex: "amount",
     },
     {
-      title: "Бүртгүүлсэн огноо",
+      title: "Үүсгэсэн огноо",
       dataIndex: "created",
       render: (text) => moment(text).fromNow(),
+    },
+    {
+      title: "Tөлөв",
+      dataIndex: "status",
+      render: (text, record) =>
+        !text ? (
+          <Tag color="#f50">Tөлөөгүй</Tag>
+        ) : (
+          <Tooltip title={moment(record.paid).format("YYYY MM DD")}>
+            <Tag color="#87d068">Tөлсөн</Tag>
+          </Tooltip>
+        ),
     },
   ];
   useEffect(() => load(), []);
@@ -47,12 +75,12 @@ const Users = () => {
           {state ? (
             <>
               <div className="title-container">
-                <span className="page-title">Хэрэглэгч</span>
+                <span className="page-title">Tүрээсүүд</span>
               </div>
               <div className="">
                 <Form.Item>
                   <Input
-                    placeholder="Имэйл хаягаар хайх"
+                    placeholder="Имэйл хаяг эсвэл үзвэрийн нэрээр хайх "
                     size="large"
                     className="custom-input"
                     autoFocus={true}
@@ -61,10 +89,14 @@ const Users = () => {
                       var search = e.target.value;
                       if (search) {
                         setSearch(
-                          state.filter((user) =>
-                            user.email
-                              .toLowerCase()
-                              .includes(search.toLowerCase())
+                          state.filter(
+                            (data) =>
+                              data.user?.email
+                                .toLowerCase()
+                                .includes(search.toLowerCase()) ||
+                              data.title?.name
+                                .toLowerCase()
+                                .includes(search.toLowerCase())
                           )
                         );
                       } else {
@@ -81,7 +113,9 @@ const Users = () => {
                 locale={{
                   emptyText: (
                     <Empty
-                      description={<span>Хэрэглэгч бүргүүлээгүй байна</span>}
+                      description={
+                        <span>Tөлбөрийн нэхэмжлэлийн түүх олдсонгүй</span>
+                      }
                     />
                   ),
                 }}
@@ -97,4 +131,4 @@ const Users = () => {
     </>
   );
 };
-export default Users;
+export default Invoice;

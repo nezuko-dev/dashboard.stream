@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   password: { type: String, required: true },
   created: { type: Date, default: Date.now },
-  session: { type: String, default: null, select: false },
+  ip: { type: String, default: null, select: false },
   reset_password_token: { type: String, default: null, select: false },
   reset_password_expires: { type: Date, default: null, select: false },
 });

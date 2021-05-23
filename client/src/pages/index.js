@@ -12,6 +12,8 @@ import Content from "./content";
 import Users from "./users";
 
 import Title from "./title";
+import Invoice from "./invoice";
+import Rent from "./rent";
 export {
   Auth,
   Forgot,
@@ -25,4 +27,6 @@ export {
   Title,
   Content,
   Users,
+  Invoice,
+  Rent,
 };

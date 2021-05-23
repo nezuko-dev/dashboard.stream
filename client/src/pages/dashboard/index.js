@@ -7,6 +7,9 @@ import {
   ProfileTwoTone,
   VideoCameraTwoTone,
   DollarCircleTwoTone,
+  FileZipTwoTone,
+  PlaySquareTwoTone,
+  HourglassTwoTone,
 } from "@ant-design/icons";
 import axios from "axios";
 import "./style.scss";
@@ -22,11 +25,39 @@ const Dashboard = () => {
         path: "/users",
       },
       {
+        key: "admins",
+        title: "Админ",
+        count: 0,
+        icon: <SmileTwoTone />,
+        path: "/admins",
+      },
+      {
+        key: "genres",
+        title: "Контентын төрөл",
+        count: 0,
+        icon: <ProfileTwoTone />,
+        path: "/genre",
+      },
+      {
         key: "contents",
         title: "Нийт контент",
         count: 0,
         icon: <VideoCameraTwoTone />,
         path: "/contents",
+      },
+      {
+        key: "franchises",
+        title: "Нийт бүлэг",
+        count: 0,
+        icon: <FileZipTwoTone />,
+        path: "/franchise",
+      },
+      {
+        key: "titles",
+        title: "Нийт үзвэрүүд",
+        count: 0,
+        icon: <PlaySquareTwoTone />,
+        path: "/titles",
       },
       {
         key: "invoices",
@@ -36,18 +67,11 @@ const Dashboard = () => {
         path: "/invoice",
       },
       {
-        key: "genres",
-        title: "Контентын ангилал",
+        key: "rents",
+        title: "Идэвхтэй түрээсүүд",
         count: 0,
-        icon: <ProfileTwoTone />,
-        path: "/genre",
-      },
-      {
-        key: "admins",
-        title: "Админ",
-        count: 0,
-        icon: <SmileTwoTone />,
-        path: "/admins",
+        icon: <HourglassTwoTone />,
+        path: "/rents",
       },
     ];
     axios

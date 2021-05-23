@@ -12,5 +12,7 @@ router.use("/content", token, require("./content"));
 router.use("/franchise", token, require("./franchise"));
 router.use("/titles", token, require("./title"));
 router.use("/users", token, require("./user"));
+router.use("/invoice", token, require("./invoice"));
+router.use("/rent", token, require("./rent"));
 
 module.exports = router;

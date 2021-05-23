@@ -11,11 +11,12 @@ import {
   PlaySquareOutlined,
   CreditCardOutlined,
   SettingOutlined,
-  UserOutlined,
   LogoutOutlined,
   ExclamationCircleOutlined,
   CloudUploadOutlined,
   OrderedListOutlined,
+  FundOutlined,
+  FieldTimeOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import "./style.scss";
@@ -32,6 +33,12 @@ const Drawer = () => {
           title: "Хянах самбар",
           role: ["admin", "editor"],
           icon: <DashboardOutlined />,
+        },
+        {
+          to: "/report",
+          title: "Tайлан",
+          role: ["admin"],
+          icon: <FundOutlined />,
         },
         {
           to: "/users",
@@ -75,6 +82,12 @@ const Drawer = () => {
           icon: <PlaySquareOutlined />,
         },
         {
+          to: "/rent",
+          title: "Tүрээслэсэн үзвэрүүд",
+          role: ["admin"],
+          icon: <FieldTimeOutlined />,
+        },
+        {
           to: "/invoice",
           title: "Tөлбөрүүд",
           role: ["admin"],
@@ -90,12 +103,6 @@ const Drawer = () => {
           title: "Tохиргоо",
           role: ["admin", "editor"],
           icon: <SettingOutlined />,
-        },
-        {
-          to: "/profile",
-          title: "Хувийн мэдээлэл",
-          role: ["admin", "editor"],
-          icon: <UserOutlined />,
         },
         {
           to: "/logout",

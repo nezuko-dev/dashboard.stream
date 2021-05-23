@@ -19,6 +19,8 @@ import {
   Title,
   Content,
   Users,
+  Invoice,
+  Rent,
 } from "pages";
 // context
 import { User } from "context/user";
@@ -99,6 +101,8 @@ const App = () => {
                   <PrivateRoute path="/titles" exact component={Title} />
                   <PrivateRoute path="/contents" exact component={Content} />
                   <PrivateRoute path="/users" exact component={Users} />
+                  <PrivateRoute path="/invoice" exact component={Invoice} />
+                  <PrivateRoute path="/rent" exact component={Rent} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>
