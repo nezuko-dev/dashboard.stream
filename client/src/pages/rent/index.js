@@ -47,7 +47,7 @@ const Rent = () => {
     {
       title: "Дуусах огноо",
       dataIndex: "expires",
-      render: (text) => moment(text).format("YYYY-mm-d HH:ss"),
+      render: (text) => moment(text).format("YYYY-MM-DD HH:ss"),
     },
   ];
   useEffect(() => load(), []);

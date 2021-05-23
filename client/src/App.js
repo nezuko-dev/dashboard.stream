@@ -21,6 +21,7 @@ import {
   Users,
   Invoice,
   Rent,
+  Report,
 } from "pages";
 // context
 import { User } from "context/user";
@@ -103,6 +104,7 @@ const App = () => {
                   <PrivateRoute path="/users" exact component={Users} />
                   <PrivateRoute path="/invoice" exact component={Invoice} />
                   <PrivateRoute path="/rent" exact component={Rent} />
+                  <PrivateRoute path="/report" exact component={Report} />
                   <Redirect to="/dashboard" />
                 </Switch>
               </div>

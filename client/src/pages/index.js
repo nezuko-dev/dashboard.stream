@@ -14,6 +14,7 @@ import Users from "./users";
 import Title from "./title";
 import Invoice from "./invoice";
 import Rent from "./rent";
+import Report from "./report";
 export {
   Auth,
   Forgot,
@@ -29,4 +30,5 @@ export {
   Users,
   Invoice,
   Rent,
+  Report,
 };

@@ -7,5 +7,5 @@ const dashboard = require("../controllers/dashboard");
  * /api/dashboard:
  */
 router.get("/", dashboard.index);
-
+router.get("/income", dashboard.income);
 module.exports = router;

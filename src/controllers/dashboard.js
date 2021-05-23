@@ -20,3 +20,13 @@ exports.index = async (req, res) => {
     rents: await Rent.countDocuments({ expires: { $gt: Date.now() } }),
   });
 };
+exports.income = async (req, res) => {
+  var data = await Rent.find({
+    created: {
+      $gte: new Date(new Date().valueOf() - 30 * 1000 * 60 * 60 * 24),
+    },
+  })
+    .select("created")
+    .populate("title", "price.amount");
+  return res.json({ status: true, data });
+};

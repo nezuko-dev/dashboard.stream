@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Col, message, Row } from "antd";
+import { Col, message, Row, Divider, Spin } from "antd";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import {
   SmileTwoTone,
   IdcardTwoTone,
@@ -12,9 +13,12 @@ import {
   HourglassTwoTone,
 } from "@ant-design/icons";
 import axios from "axios";
+import { Line } from "react-chartjs-2";
 import "./style.scss";
 const Dashboard = () => {
   const [state, setState] = useState(null);
+  const [income, setIncome] = useState(null);
+
   useEffect(() => {
     var data = [
       {
@@ -86,6 +90,18 @@ const Dashboard = () => {
         }
       })
       .catch((err) => message.error("Хүсэлт амжилтгүй"));
+    axios
+      .get("/api/dashboard/income")
+      .then((response) => {
+        if (response.data.status) {
+          // response.data.data.map((data) => {
+          //   amount.push(data.title.price.amount);
+          //   labels.push(moment(data).format("YYYY MM DD"));
+          // });
+          setIncome(response.data.data);
+        }
+      })
+      .catch((err) => message.error("Хүсэлт амжилтгүй"));
   }, []);
   return (
     <div className="dashboard">
@@ -113,6 +129,34 @@ const Dashboard = () => {
             ))
           : null}
       </Row>
+      <Divider />
+      <div className="title-container">
+        <span className="page-title">Энэ сарын орлогууд</span>
+      </div>
+      {income ? (
+        <Line
+          data={{
+            labels: income.map((data) => {
+              return moment(data).format("YYYY MM DD");
+            }),
+            datasets: [
+              {
+                label: " Tүрээсийн дүн",
+                data: income.map((data) => {
+                  return data.title.price.amount;
+                }),
+                fill: false,
+                backgroundColor: "rgb(24, 144, 255)",
+                borderColor: "rgba(24, 144, 255,0.2)",
+              },
+            ],
+          }}
+        />
+      ) : (
+        <div className="loading">
+          <Spin />
+        </div>
+      )}
     </div>
   );
 };
